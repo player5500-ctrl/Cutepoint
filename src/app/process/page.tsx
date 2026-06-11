@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import QChan from "@/components/QChan";
 
 const steps = [
@@ -6,31 +7,31 @@ const steps = [
     step: "01",
     title: "需求評估與估價",
     desc: "使用我們的線上成本試算工具初步了解預算，填寫詢價表單上傳平面照片或 3D 檔案。專業團隊將在 24 小時內與您聯繫，詳細溝通尺寸、細節與正式報價。",
-    icon: "📋",
+    icon: "/assets/qchan/q_fill.gif",
   },
   {
     step: "02",
     title: "簽訂合約與付定",
     desc: "確認需求無誤後，雙方簽署客製化委託合約，確保工期與雙方權益。支付 50% 定金後，我們便會安排 3D 雕塑師與機器排程，正式啟動專案！",
-    icon: "🤝",
+    icon: "/assets/qchan/q_ok.gif",
   },
   {
     step: "03",
     title: "3D 建模與核對",
     desc: "我們的 3D 雕塑師會進行手工精細建模或修模。完成後提供三維渲染圖（正面、側面、背面及局部細節）給您核對。我們提供數次免費微調，確保神韻符合期望！",
-    icon: "💻",
+    icon: "/assets/qchan/q_upload.gif",
   },
   {
     step: "04",
     title: "工業級全彩石膏3D列印",
     desc: "模型確認後進行切片，使用工業級全彩石膏粉末設備進行印製。印製完成後進行後處理。",
-    icon: "🖨️",
+    icon: "/assets/qchan/q_making.gif",
   },
   {
     step: "05",
     title: "安全包裝與送達",
     desc: "成品通過出廠品管後，以高強度防震氣泡防護材料妥善包裹，放入 Q醬 客製紙盒與精美禮品袋中。寄出後提供追蹤單號，或提供工作室面交自取。開箱即見您心愛的公仔！",
-    icon: "🎁",
+    icon: "/assets/qchan/q_ship.gif",
   },
 ];
 
@@ -90,7 +91,7 @@ export default function ProcessPage() {
                   <div className="w-full md:w-[45%] pl-20 md:pl-0 space-y-3">
                     <div className="bg-white rounded-3xl border border-brand-border/60 p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-2xl">{step.icon}</span>
+                        <Image src={step.icon} alt={step.title} width={48} height={48} className="rounded-full border border-brand-orange/40 bg-white" />
                         <h3 className="text-lg font-black text-brand-dark">
                           {step.title}
                         </h3>

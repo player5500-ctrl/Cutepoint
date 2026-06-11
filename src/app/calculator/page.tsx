@@ -442,7 +442,8 @@ function CalculatorContent() {
           <div className="absolute top-10 left-10 w-24 h-24 rounded-full bg-white/10 filter blur-lg" />
 
           <h3 className="text-lg font-bold tracking-wider mb-6 flex items-center gap-2 relative">
-            <span>📊</span> 預估計算結果
+            <Image src="/assets/qchan/q_quote.gif" alt="Q醬報價" width={40} height={40} className="rounded-full bg-white/90" />
+            預估計算結果
           </h3>
 
           <div className="space-y-6 relative">
@@ -528,8 +529,9 @@ function CalculatorContent() {
 
         {/* Warning notification */}
         <div className="bg-white rounded-2xl border border-brand-border/60 p-5 shadow-sm">
-          <h4 className="text-xs font-extrabold text-brand-orange tracking-widest uppercase mb-2">
-            ⚠️ 重要提示
+          <h4 className="text-xs font-extrabold text-brand-orange tracking-widest uppercase mb-2 flex items-center gap-2">
+            <Image src="/assets/qchan/q_notice.gif" alt="Q醬提醒" width={32} height={32} className="rounded-full border border-brand-orange/40 bg-white" />
+            重要提示
           </h4>
           <p className="text-xs sm:text-sm text-brand-muted leading-relaxed font-semibold">
             此為初步估價，實際報價會依照片清晰度、模型複雜度、尺寸、數量與製作方式確認。修改以免費小修 1 次為原則，第 2 次起酌收修改費；20 件以上大量訂單採專案報價。

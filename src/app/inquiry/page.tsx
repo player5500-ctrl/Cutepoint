@@ -551,7 +551,7 @@ export default function InquiryPage() {
         {/* Q-chan guide */}
         <div className="max-w-3xl mx-auto mb-12">
           <QChan
-            image="/assets/qchan/q_upload.gif"
+            image="/assets/qchan/q_fill.gif"
             text="哇！看到你的估價需求囉，Q醬 已經幫你把所有的尺寸、數量還有是否有建模選項都自動帶過來了！你只需要填寫姓名跟 LINE 或是 Email，再上傳你的參考照片，Q醬 就能收件幫你給師傅排程囉 🐾！如果有其它特殊想法，也可以寫在底下的備註欄喔！"
             position="left"
           />

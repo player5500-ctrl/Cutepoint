@@ -57,6 +57,7 @@ export default function AboutPage() {
             {/* Voice bubble by Q-chan */}
             <div className="pt-2">
               <QChan
+                image="/assets/qchan/q_qa.gif"
                 text="嘻嘻，沒錯！Q醬 每天都有在認真上班督促設計師哥哥姐姐唷🐾！如果做出來的公仔不夠可愛，Q醬 是不會放行的！我的鯛魚燒就是我的品管印章喔！"
                 position="right"
               />
