@@ -20,7 +20,7 @@ const caseStudies = [
     id: 1,
     title: "森林系婚禮 Q版人像對偶",
     category: "Q版人像公仔",
-    desc: "依據新人提供的多角度婚紗照，量身打造 12cm Q版陶質質感公仔，做為婚禮簽到桌看板與伴手禮。",
+    desc: "從新人的婚紗照出發，把兩人最幸福的模樣化成 12cm Q版公仔，在簽到桌迎接每一位賓客，也成為親友帶回家的暖心紀念。",
     size: "12cm",
     days: "14天",
     img: "/assets/q_jiang.jpg",
@@ -29,7 +29,7 @@ const caseStudies = [
     id: 2,
     title: "英國短毛貓「波波」紀念公仔",
     category: "寵物公仔",
-    desc: "精準雕塑波波圓潤的腮幫子與無辜大眼，手工毛流噴塗上色，為飼主保留最有溫度的毛孩身影。",
+    desc: "波波圓潤的腮幫子與無辜大眼，我們都用心留了下來，再以手工噴塗還原毛色，讓飼主能繼續把最愛的毛孩留在身邊。",
     size: "8cm",
     days: "12天",
     img: "/assets/q_jiang.jpg",
@@ -38,7 +38,7 @@ const caseStudies = [
     id: 3,
     title: "AI 生成圖「機械精靈」立體化",
     category: "角色/AI圖轉公仔",
-    desc: "客戶使用 Midjourney 生成的精細科幻女僕圖。我們的 3D 師進行分件拆分，並在細節處補齊 3D 結構，最終列印組裝而成。",
+    desc: "客戶用 Midjourney 畫出心中的科幻角色，我們的 3D 師傅以專業建模將平面圖轉為立體結構，分件列印組裝，讓想像第一次真正站在眼前。",
     size: "15cm",
     days: "18天",
     img: "/assets/q_jiang.jpg",
@@ -47,7 +47,7 @@ const caseStudies = [
     id: 4,
     title: "「小藍創投」品牌吉祥物公仔",
     category: "企業展示樣品",
-    desc: "為創投公司打造展示廳迎賓吉祥物公仔。我們對企業 LOGO 進行 3D 轉化，呈現出簡潔現代感的幾何切面線條。",
+    desc: "為創投公司打造展示廳的迎賓吉祥物。我們將企業 LOGO 立體化，以簡潔現代的幾何線條，傳達品牌的專業與親和力。",
     size: "18cm",
     days: "10天",
     img: "/assets/q_jiang.jpg",
@@ -56,7 +56,7 @@ const caseStudies = [
     id: 5,
     title: "桌遊「奇幻王國」客製模型配件",
     category: "大量列印服務",
-    desc: "桌遊設計工作室委託的 120 套精細小兵配件代印，使用工業級全彩石膏粉末設備批量印製，確保卡榫契合度與色彩一致。",
+    desc: "桌遊設計工作室委託的 120 套小兵配件代印，以工業級全彩石膏粉末設備批量印製，專業把關卡榫契合度與色彩一致性，如期交付。",
     size: "6cm",
     days: "7天",
     img: "/assets/q_jiang.jpg",
@@ -65,7 +65,7 @@ const caseStudies = [
     id: 6,
     title: "原創繪本角色「鯛魚燒貓貓」建模",
     category: "3D 建模與修圖服務",
-    desc: "將平面手繪稿轉為數位 3D 雕塑檔案。完成完整拓撲與面網優化，可直接用於後續動畫製作與實體列印拆件。",
+    desc: "將平面手繪稿轉為 3D 數位雕塑檔案，完成拓撲與面網優化，讓繪本角色能走進動畫與實體列印的下一段旅程。",
     size: "數位檔案",
     days: "5天",
     img: "/assets/q_jiang.jpg",
@@ -82,7 +82,7 @@ export default function ShowcasePage() {
   return (
     <div className="w-full py-12 md:py-16 bg-brand-cream/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Page Header */}
         <div className="max-w-3xl mx-auto text-center space-y-4 mb-10">
           <span className="text-xs font-black tracking-widest text-brand-orange uppercase bg-brand-peach-light px-3 py-1 rounded-full">
@@ -92,7 +92,7 @@ export default function ShowcasePage() {
             作品案例展示
           </h1>
           <p className="text-sm text-brand-muted font-medium">
-            在這裡，我們展示了與顧客們共同創作出具有溫馨故事與完美細節的實體 3D 作品。
+            每一件作品背後，都有一段顧客想留住的故事。我們用專業的 3D 技術，陪伴大家把心中重要的人事物，化成能捧在手心的溫暖。
           </p>
         </div>
 
@@ -100,7 +100,7 @@ export default function ShowcasePage() {
         <div className="max-w-3xl mx-auto mb-12">
           <QChan
             image="/assets/qchan/q_wow.gif"
-            text={`你看！這些都是我們師傅跟客人一起做出來的公仔唷🐾！\n特別是第三個的「機械精靈」，是客人拿自己用 AI 畫的平面圖片轉出來的呢！我們 3D 師父特別對細節做了精細雕琢，做出來的時候大家都驚嘆不已！\n如果你也想做一個，可以參考這些案例的尺寸跟複雜度，點擊底下的按鈕直接去試算看看喔！`}
+            text={`你看！這些都是我們師傅跟客人一起完成的公仔唷🐾！\n特別是第三個的「機械精靈」，是客人拿自己用 AI 畫的平面圖片轉出來的呢！我們的 3D 師傅用心把它變成立體，客人收到的時候感動得不得了！\n如果你也想做一個，可以參考這些案例的尺寸跟複雜度，點擊底下的按鈕直接去試算看看喔！`}
             position="left"
           />
         </div>

@@ -110,7 +110,7 @@ export default function ProductsPage() {
         <div className="max-w-3xl mx-auto mb-16">
           <QChan
             image="/assets/qchan/q_board.gif"
-            text="主打的產品都在這裡囉！我們提供 6 大服務項目，每一件作品都是職人一筆一筆細心刻劃的心意。現在我們全力聚焦在人偶與寵物的製作，想把你最珍惜的模樣好好留下來！快來看看哪一個項目符合你的需要吧 ✨"
+            text="主打的產品都在這裡囉！我們提供 6 大服務項目，每一件作品都由 3D 建模師運用專業修模技術用心完成。現在我們全力聚焦在人偶與寵物的製作，想把你最珍惜的模樣好好留下來！快來看看哪一個項目符合你的需要吧 ✨"
             position="left"
           />
         </div>

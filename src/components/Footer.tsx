@@ -23,7 +23,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm text-brand-muted max-w-sm leading-relaxed">
-              把最珍貴的靈感實體化！不論是可愛的 Q 版人像、最愛的寵物，還是獨特的人設公仔，萌點3D 以專業的技術與暖心的熱忱，為您打造專屬的精緻 3D 成品。
+              把最珍貴的靈感實體化！不論是可愛的 Q 版人像、最愛的寵物，還是獨特的人設公仔，萌點3D 以專業的技術與暖心的熱忱，為您打造獨一無二、值得珍藏的 3D 成品。
             </p>
             <div className="flex items-center gap-2.5 text-xs text-brand-orange font-semibold">
               <span className="inline-block w-2 h-2 rounded-full bg-brand-orange animate-pulse" />

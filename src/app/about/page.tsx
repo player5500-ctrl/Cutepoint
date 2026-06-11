@@ -50,7 +50,7 @@ export default function AboutPage() {
                 在工作室裡，Q醬 除了是大家的開心果，也擔任「首要品管導覽員」。她常常在設計師建模時，趴在手繪板旁監督；當列印機嘎嘎運作時，她則會好奇地盯著平台看。
               </p>
               <p>
-                「每個公仔都有靈魂，就像每隻貓咪都有自己的個性一樣！」這就是 Q醬 帶領我們團隊堅持手工打磨、細緻彩繪的職人理念。我們相信，透過 Q醬 活潑溫馨的引導，客製公仔將不再是遙遠冰冷的科技，而是暖心、充滿歡樂的體驗。
+                「每個公仔都有靈魂，就像每隻貓咪都有自己的個性一樣！」這就是 Q醬 帶領我們團隊以專業手藝修模、用心彩繪上色的初衷。我們相信，透過 Q醬 活潑溫馨的引導，客製公仔將不再是遙遠冰冷的科技，而是暖心、充滿歡樂的體驗。
               </p>
             </div>
             
@@ -71,7 +71,7 @@ export default function AboutPage() {
             <span className="text-3xl block">🎨</span>
             <h3 className="text-lg font-bold text-brand-dark">職人手工修模的溫度</h3>
             <p className="text-xs sm:text-sm text-brand-muted leading-relaxed font-semibold">
-              每個公仔皆由具備多年美術功底的 3D 雕塑師手工建模與修整，神韻、比例與細節一筆一筆細心刻劃，讓眼睛閃爍著生動靈魂。
+              每個公仔皆由多年美術功底的 3D 雕塑師親自操刀，從骨架比例、臉部神韻到姿態重心，運用專業修模技術逐層調整，讓作品不只是像，更帶著本人的神采與溫度。
             </p>
           </div>
           <div className="bg-white rounded-3xl border border-brand-border/60 p-6 shadow-sm text-center space-y-3">

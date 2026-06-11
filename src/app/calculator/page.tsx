@@ -257,7 +257,10 @@ function CalculatorContent() {
                   <button
                     key={s}
                     type="button"
-                    onClick={() => setSize(s)}
+                    onClick={() => {
+                      setSize(s);
+                      if (s !== "18cm") setNeedGiftBox(false); // 禮盒包裝僅限 18cm
+                    }}
                     className={`py-2 rounded-xl text-sm font-bold border transition-colors flex flex-col items-center ${
                       isSelected
                         ? "border-brand-orange bg-brand-orange text-white shadow-sm"
@@ -382,7 +385,9 @@ function CalculatorContent() {
               {[
                 { label: "玻璃罩", icon: "🫧", desc: "防塵防碰撞，提升收藏感", on: needGlassCase, toggle: () => setNeedGlassCase(!needGlassCase), fee: glassFees[sizeTier(size)] },
                 { label: "名牌底座", icon: "🏷️", desc: "可刻姓名、日期、祝福語", on: needNameBase, toggle: () => setNeedNameBase(!needNameBase), fee: nameBaseFees[sizeTier(size)] },
-                { label: "禮盒包裝", icon: "🎁", desc: "禮盒＋保護材，送禮體面", on: needGiftBox, toggle: () => setNeedGiftBox(!needGiftBox), fee: giftBoxFees[sizeTier(size)] },
+                ...(size === "18cm"
+                  ? [{ label: "禮盒包裝", icon: "🎁", desc: "禮盒＋保護材，送禮體面（限 18cm 旗艦款）", on: needGiftBox, toggle: () => setNeedGiftBox(!needGiftBox), fee: giftBoxFees[sizeTier(size)] }]
+                  : []),
               ].map((item) => (
                 <button
                   key={item.label}

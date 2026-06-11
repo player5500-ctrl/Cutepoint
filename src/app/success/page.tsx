@@ -79,7 +79,7 @@ function SuccessPageContent() {
           <div className="p-3 bg-brand-cream/20 rounded-xl border border-brand-border/25">
             <span className="text-lg block mb-1">3</span>
             <p className="text-xs font-bold text-brand-dark">列印上色</p>
-            <p className="text-[10px] text-brand-muted mt-0.5 font-medium leading-relaxed">精緻打磨上色與防護包裝寄送</p>
+            <p className="text-[10px] text-brand-muted mt-0.5 font-medium leading-relaxed">專業打磨上色與防護包裝寄送</p>
           </div>
         </div>
       </div>
