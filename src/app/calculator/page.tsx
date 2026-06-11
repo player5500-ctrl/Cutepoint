@@ -107,7 +107,7 @@ function CalculatorContent() {
       } else if (complexity === "簡單") {
         high = 1800;
       }
-      let days = complexity === "複雜" ? 7 : 5;
+      let days = complexity === "複雜" ? 6 : 4;
       if (isUrgent) {
         low += urgentFees[0];
         high += urgentFees[0];
@@ -172,14 +172,15 @@ function CalculatorContent() {
       totalHigh += urgentFees[tier];
     }
 
-    // 7. 交期（表16：一般 14 至 25 個工作天）
-    let baseDays = 14;
-    if (complexity === "簡單") baseDays -= 2;
-    else if (complexity === "複雜") baseDays += 5;
-    if (quantity === "2–5 件") baseDays += 3;
-    else if (quantity === "6–20 件") baseDays += 7;
+    // 7. 交期（標準 7 個工作天起，依複雜度/數量/建模方式遞增減）
+    let baseDays = 7;
+    if (complexity === "簡單") baseDays -= 1;
+    else if (complexity === "複雜") baseDays += 3;
+    if (hasOwnFile) baseDays -= 2; // 自備 3D 檔可省去建模與確認往返
+    if (quantity === "2–5 件") baseDays += 2;
+    else if (quantity === "6–20 件") baseDays += 4;
     let finalDays = isUrgent ? Math.ceil(baseDays * 0.6) : baseDays;
-    if (finalDays < 5) finalDays = 5;
+    if (finalDays < 3) finalDays = 3;
 
     // 最低價保護
     if (totalLow < 500) totalLow = 500;
