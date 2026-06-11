@@ -243,8 +243,8 @@ export default function Home() {
                     ✓
                   </div>
                   <div>
-                    <h4 className="text-base font-bold text-brand-dark">專業 3D 雕塑師修圖</h4>
-                    <p className="text-sm text-brand-muted leading-relaxed font-medium">不依賴純自動轉換！我們的 3D 雕塑師會針對面部細節、骨架比例進行手工修整。</p>
+                    <h4 className="text-base font-bold text-brand-dark">完整紀念禮品套組</h4>
+                    <p className="text-sm text-brand-muted leading-relaxed font-medium">可加購名牌底座、玻璃罩與禮盒包裝，刻上姓名與祝福。送出的不只是公仔，而是一份完整的紀念禮。</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -253,7 +253,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h4 className="text-base font-bold text-brand-dark">價格透明與彈性天數</h4>
-                    <p className="text-sm text-brand-muted leading-relaxed font-medium">提供線上即時成本試算，無任何隱藏費用，急件最快 3 天內出貨。</p>
+                    <p className="text-sm text-brand-muted leading-relaxed font-medium">提供線上即時成本試算，無任何隱藏費用，急件可加價優先排程、縮短工期。</p>
                   </div>
                 </div>
               </div>
