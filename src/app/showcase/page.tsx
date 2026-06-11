@@ -99,6 +99,7 @@ export default function ShowcasePage() {
         {/* Q-chan mascot message */}
         <div className="max-w-3xl mx-auto mb-12">
           <QChan
+            image="/assets/qchan/q_complexity.gif"
             text={`你看！這些都是我們師傅跟客人一起做出來的公仔唷🐾！\n特別是第三個的「機械精靈」，是客人拿自己用 AI 畫的平面圖片轉出來的呢！我們 3D 師父特別對細節做了精細雕琢，做出來的時候大家都驚嘆不已！\n如果你也想做一個，可以參考這些案例的尺寸跟複雜度，點擊底下的按鈕直接去試算看看喔！`}
             position="left"
           />

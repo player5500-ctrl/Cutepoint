@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import QChan from "@/components/QChan";
 
 // Fixed choices
@@ -218,7 +219,10 @@ function CalculatorContent() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Size */}
           <div className="space-y-3">
-            <label className="text-sm font-extrabold text-brand-dark tracking-wider">2. 選擇尺寸 (高/長度)</label>
+            <label className="flex items-center gap-2 text-sm font-extrabold text-brand-dark tracking-wider">
+              <Image src="/assets/qchan/q_measure.gif" alt="Q醬量尺寸" width={36} height={36} className="rounded-full border border-brand-orange/40 bg-white" />
+              2. 選擇尺寸 (高/長度)
+            </label>
             <div className="grid grid-cols-3 gap-2">
               {sizes.map((s) => {
                 const isSelected = size === s;
@@ -334,7 +338,10 @@ function CalculatorContent() {
 
         {/* 6. Complexity */}
         <div className="space-y-3">
-          <label className="text-sm font-extrabold text-brand-dark tracking-wider">6. 模型複雜度</label>
+          <label className="flex items-center gap-2 text-sm font-extrabold text-brand-dark tracking-wider">
+            <Image src="/assets/qchan/q_complexity.gif" alt="Q醬檢視複雜度" width={36} height={36} className="rounded-full border border-brand-orange/40 bg-white" />
+            6. 模型複雜度
+          </label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {complexities.map((comp) => {
               const isSelected = complexity === comp.label;
@@ -439,7 +446,10 @@ function CalculatorContent() {
 
             {/* Time section */}
             <div className="space-y-1">
-              <span className="text-xs font-semibold text-white/80 tracking-widest uppercase">預估製作天數</span>
+              <span className="flex items-center gap-2 text-xs font-semibold text-white/80 tracking-widest uppercase">
+                <Image src="/assets/qchan/q_days.gif" alt="Q醬預估天數" width={32} height={32} className="rounded-full bg-white/90" />
+                預估製作天數
+              </span>
               <div className="text-2xl font-black flex items-baseline gap-1.5">
                 <span>約 {days} 天</span>
                 <span className="text-xs font-bold text-brand-yellow bg-white/15 px-2 py-0.5 rounded-md">
@@ -521,6 +531,7 @@ export default function CalculatorPage() {
         {/* Mascot guide */}
         <div className="max-w-3xl mx-auto mb-12">
           <QChan
+            image="/assets/qchan/q_calc.gif"
             text="來試算你的公仔製作預算吧！你可以依照尺寸、複雜度等選項來調整規格。Q醬特別提醒：如果已經有自己的 3D 模型 (.stl 格式)，「建模需求」要記得選「不需要」，這樣可以省下一大筆建模費用唷 🐾！試算好之後點擊「前往正式詢價」，會自動把資料帶過去，不用重新填寫唷！"
             position="left"
           />

@@ -54,6 +54,7 @@ function SuccessPageContent() {
       {/* Q-chan guide bubble */}
       <div className="text-left">
         <QChan
+          image="/assets/qchan/q_go.gif"
           text={`收到你的委託單囉！真的非常感謝你～💕\n這張詢價單的序號是【${inquiryId}】，Q醬 已經端端正正地雙手遞交給我們的專業 3D 雕塑團隊與印製師傅囉！\n\n我們會在 24 小時內仔細評估你上傳的檔案與需求複雜度，並透過你留下的聯絡方式回覆正式報價單與後續製作合約，請耐心等候我們唷🐾！`}
           position="left"
         />

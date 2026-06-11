@@ -39,6 +39,7 @@ export default function ContactPage() {
         {/* Q-chan guidance */}
         <div className="max-w-3xl mx-auto">
           <QChan
+            image="/assets/qchan/q_wave.gif"
             text={`如果你有任何不懂的，除了直接在右邊留言之外，Q醬 推薦你直接加我們的官方 LINE ID【@cutepoint3d】喔🐾！我們會有專門的印製師傅在線即時回答你的問題，發照片核對檔案也更方便呢！`}
             position="left"
           />

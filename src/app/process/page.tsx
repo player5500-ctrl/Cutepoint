@@ -38,7 +38,7 @@ export default function ProcessPage() {
   return (
     <div className="w-full py-12 md:py-16 bg-brand-cream/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Page Header */}
         <div className="max-w-3xl mx-auto text-center space-y-4 mb-10">
           <span className="text-xs font-black tracking-widest text-brand-orange uppercase bg-brand-peach-light px-3 py-1 rounded-full">
@@ -55,6 +55,7 @@ export default function ProcessPage() {
         {/* Q-chan guidance bubble */}
         <div className="max-w-3xl mx-auto mb-16">
           <QChan
+            image="/assets/qchan/q_upload.gif"
             text={`很多第一次訂製公仔的客人，會擔心不知道做出來會長怎樣。放心！在步驟 03【3D建模與核對】時，師傅會提供正反左右的 3D 模擬圖給你看，你要看過滿意了，我們才會真的按下列印鈕喔🐾！\n交給 萌點3D，就是這麼安心可靠！`}
             position="left"
           />

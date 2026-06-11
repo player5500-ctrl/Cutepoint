@@ -109,6 +109,7 @@ export default function Home() {
               {/* Q-chan Welcoming Bubble */}
               <div className="max-w-xl mx-auto lg:mx-0 pt-4">
                 <QChan
+                  image="/assets/qchan/q_wave.gif"
                   text="哈囉！我是萌點3D的看板娘 Q醬 🐾！不論是人像、貓貓狗狗還是你畫的角色，Q醬都可以用神奇的 3D 列印幫你變出來喔！想要知道大概要花多少錢嗎？點擊上面的「成本試算」跟 Q醬一起玩吧！"
                   position="left"
                   pulse={true}
@@ -122,13 +123,13 @@ export default function Home() {
                 {/* Decorative frames */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-brand-peach to-brand-yellow rounded-full filter blur-xl opacity-60 animate-pulse" />
                 <div className="absolute inset-4 bg-white rounded-3xl shadow-xl overflow-hidden border border-brand-border flex items-center justify-center p-3 animate-float">
-                  <div className="relative w-full h-full rounded-2xl overflow-hidden">
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden bg-white">
                     <Image
-                      src="/assets/q_jiang.jpg"
-                      alt="萌點3D 吉祥物 Q醬"
+                      src="/assets/qchan/q_wave.gif"
+                      alt="萌點3D 吉祥物 Q醬 揮手問候"
                       fill
                       priority
-                      className="object-cover object-center"
+                      className="object-contain"
                     />
                   </div>
                 </div>
