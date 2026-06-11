@@ -210,8 +210,8 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/60 via-transparent to-transparent flex items-end p-8">
                 <div className="text-white space-y-1">
-                  <span className="text-xs text-brand-yellow font-extrabold tracking-wider">職人精神 & 高階設備</span>
-                  <h3 className="text-xl font-bold">精細修模與精準調色技術</h3>
+                  <span className="text-xs text-brand-yellow font-extrabold tracking-wider">安全材質 × 職人手工 × 價格透明</span>
+                  <h3 className="text-xl font-bold">雕塑師逐件手工修整，每一份紀念都安心交付</h3>
                 </div>
               </div>
             </div>
@@ -235,7 +235,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h4 className="text-base font-bold text-brand-dark">安全且無毒的材料</h4>
-                    <p className="text-sm text-brand-muted leading-relaxed font-medium">使用環保無毒樹脂與高階 PLA 材料，色彩飽和且經久耐用。</p>
+                    <p className="text-sm text-brand-muted leading-relaxed font-medium">採用全彩石膏粉末列印，材質安全無毒、色彩直出飽和，適合展示與長久收藏。</p>
                   </div>
                 </div>
                 <div className="flex gap-4">

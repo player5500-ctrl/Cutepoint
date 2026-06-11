@@ -68,23 +68,23 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8">
           <div className="bg-white rounded-3xl border border-brand-border/60 p-6 shadow-sm text-center space-y-3">
             <span className="text-3xl block">🎨</span>
-            <h3 className="text-lg font-bold text-brand-dark">手工彩繪的溫度</h3>
+            <h3 className="text-lg font-bold text-brand-dark">職人手工修模的溫度</h3>
             <p className="text-xs sm:text-sm text-brand-muted leading-relaxed font-semibold">
-              我們不使用純機器彩色印刷！每個公仔上色皆由具備多年美術功底的彩繪塗裝師，一筆一畫手工勾勒，讓色彩更顯飽和，眼睛閃爍著生動靈魂。
+              每個公仔皆由具備多年美術功底的 3D 雕塑師手工建模與修整，神韻、比例與細節一筆一筆細心刻劃，讓眼睛閃爍著生動靈魂。
             </p>
           </div>
           <div className="bg-white rounded-3xl border border-brand-border/60 p-6 shadow-sm text-center space-y-3">
             <span className="text-3xl block">🔬</span>
             <h3 className="text-lg font-bold text-brand-dark">高精度科技支持</h3>
             <p className="text-xs sm:text-sm text-brand-muted leading-relaxed font-semibold">
-              採用最新型光固化超高精度列印，層厚僅 0.05mm。配合高品質無毒環保塗料，給您最安全、無破面、無拉絲的高水準成品。
+              採用工業級全彩石膏粉末列印，色彩直接成型免上色。配合嚴謹的後處理與出貨品管檢查，給您最安全、色彩飽和的高水準成品。
             </p>
           </div>
           <div className="bg-white rounded-3xl border border-brand-border/60 p-6 shadow-sm text-center space-y-3">
             <span className="text-3xl block">💬</span>
             <h3 className="text-lg font-bold text-brand-dark">透明貼心的溝通</h3>
             <p className="text-xs sm:text-sm text-brand-muted leading-relaxed font-semibold">
-              客製化最怕做出來與期望不符。因此在「3D建模」與「手工上色」兩個重要階段，我們均會提供照片讓您確認核對，確保百分之百滿意後才送出。
+              客製化最怕做出來與期望不符。因此在「3D建模與核對」階段，我們會提供多角度模擬圖讓您確認，百分之百滿意後才正式印製。
             </p>
           </div>
         </div>
