@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isAuthed } from "@/lib/adminAuth";
 import fs from "fs";
 import path from "path";
 
@@ -39,8 +40,11 @@ function saveInquiries(inquiries: any[]) {
   }
 }
 
-// GET: Retrieve all inquiries
-export async function GET() {
+// GET: Retrieve all inquiries（需後台密碼）
+export async function GET(request: Request) {
+  if (!isAuthed(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const inquiries = getInquiries();
   return NextResponse.json(inquiries);
 }

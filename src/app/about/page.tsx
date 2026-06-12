@@ -50,7 +50,7 @@ export default function AboutPage() {
                 在工作室裡，Q醬 除了是大家的開心果，也擔任「首要品管導覽員」。她常常在設計師建模時，趴在手繪板旁監督；當列印機嘎嘎運作時，她則會好奇地盯著平台看。
               </p>
               <p>
-                「每個公仔都有靈魂，就像每隻貓咪都有自己的個性一樣！」這就是 Q醬 帶領我們團隊以專業手藝修模、用心彩繪上色的初衷。我們相信，透過 Q醬 活潑溫馨的引導，客製公仔將不再是遙遠冰冷的科技，而是暖心、充滿歡樂的體驗。
+                「每個公仔都有靈魂，就像每隻貓咪都有自己的個性一樣！」這就是 Q醬 帶領我們團隊以專業手藝修模的初衷。我們相信，透過 Q醬 活潑溫馨的引導，客製公仔將不再是遙遠冰冷的科技，而是暖心、充滿歡樂的體驗。
               </p>
             </div>
             
@@ -69,16 +69,16 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8">
           <div className="bg-white rounded-3xl border border-brand-border/60 p-6 shadow-sm text-center space-y-3">
             <span className="text-3xl block">🎨</span>
-            <h3 className="text-lg font-bold text-brand-dark">職人手工修模的溫度</h3>
+            <h3 className="text-lg font-bold text-brand-dark">專業修模</h3>
             <p className="text-xs sm:text-sm text-brand-muted leading-relaxed font-semibold">
-              每個公仔從骨架比例、臉部神韻到姿態重心，皆運用專業修模技術逐層調整，讓作品不只是像，更帶著本人的神采與溫度。
+              每個公仔從臉部神韻到姿態重心，皆運用專業修模技術調整，讓作品不只是像，更帶著本人的神采與溫度。
             </p>
           </div>
           <div className="bg-white rounded-3xl border border-brand-border/60 p-6 shadow-sm text-center space-y-3">
             <span className="text-3xl block">🔬</span>
-            <h3 className="text-lg font-bold text-brand-dark">高精度科技支持</h3>
+            <h3 className="text-lg font-bold text-brand-dark">科技支持</h3>
             <p className="text-xs sm:text-sm text-brand-muted leading-relaxed font-semibold">
-              採用工業級全彩石膏粉末列印，色彩直接成型免上色。配合嚴謹的後處理與出貨品管檢查，給您最安全、色彩飽和的高水準成品。
+              採用工業級全彩石膏粉末列印，色彩直接成型免上色。配合嚴謹的後處理與出貨品管檢查，給您最安全、色彩飽和的成品。
             </p>
           </div>
           <div className="bg-white rounded-3xl border border-brand-border/60 p-6 shadow-sm text-center space-y-3">

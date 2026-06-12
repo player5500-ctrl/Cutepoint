@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import AdminGate, { getAdminKey } from "@/components/AdminGate";
 
 interface Inquiry {
   id: string;
@@ -47,7 +48,7 @@ const statusStyles: { [key: string]: string } = {
   "已取消": "bg-gray-50 text-gray-400 border-gray-200",
 };
 
-export default function AdminPage() {
+function AdminPanel() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
@@ -70,7 +71,9 @@ export default function AdminPage() {
   // Fetch inquiries from API
   const fetchInquiries = async () => {
     try {
-      const res = await fetch("/api/inquiries");
+      const res = await fetch("/api/inquiries", {
+        headers: { "x-admin-key": getAdminKey() },
+      });
       if (res.ok) {
         const data = await res.json();
         setInquiries(data);
@@ -108,6 +111,7 @@ export default function AdminPage() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "x-admin-key": getAdminKey(),
         },
         body: JSON.stringify({
           status: editStatus,
@@ -724,5 +728,13 @@ export default function AdminPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AdminPage() {
+  return (
+    <AdminGate>
+      <AdminPanel />
+    </AdminGate>
   );
 }

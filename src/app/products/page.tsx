@@ -20,12 +20,12 @@ const products = [
   {
     id: "pet",
     name: "寵物公仔",
-    desc: "為您心愛的貓咪、狗狗或各類毛孩製作專屬的仿真或萌化公仔。精細雕琢毛流細節與神情，讓可愛的身影永遠陪伴身旁。",
+    desc: "為您心愛的貓咪、狗狗或各類毛孩製作專屬的仿真或萌化公仔，讓可愛的身影永遠陪伴身旁。",
     specs: [
       { label: "建議尺寸", value: "6cm / 8cm / 10cm" },
-      { label: "建模需求", value: "通常需要 (需手工雕琢寵物獨特神韻)" },
+      { label: "建模需求", value: "通常需要 (需呈現寵物獨特神韻)" },
       { label: "製作天數", value: "約 12 - 18 個工作天" },
-      { label: "注意事項", value: "歡迎提供多角度的毛色細節照，有助於手繪上色時更精準還原。" },
+      { label: "注意事項", value: "歡迎提供多角度的細節照，有助於更精準還原。" },
     ],
     bg: "bg-brand-yellow-light",
     tagColor: "text-amber-600 bg-brand-yellow-light",
@@ -34,7 +34,7 @@ const products = [
   {
     id: "ai-character",
     name: "角色/AI圖轉公仔",
-    desc: "無論是自創的插畫人設、二次元角色，還是近期透過 Midjourney / Stable Diffusion 等 AI 生成的精美圖像，我們都能將 2D 平面視覺轉化為高品質的 3D 立體模型！",
+    desc: "無論是自創的插畫人設、二次元角色，還是近期透過 Midjourney / Stable Diffusion 等 AI 生成的精美圖像，我們都能將 2D 平面視覺轉化為 3D 立體模型！",
     specs: [
       { label: "建議尺寸", value: "10cm / 12cm / 15cm / 18cm" },
       { label: "建模需求", value: "需要 (從平面圖像建立完整三維骨架與面網)" },
@@ -48,7 +48,7 @@ const products = [
   {
     id: "corporate",
     name: "企業展示樣品",
-    desc: "專為企業品牌設計！包含品牌吉祥物實體化、產品結構原型、展覽大型公仔樣品等。提供高精度、高強度的展示級模型製作服務。",
+    desc: "專為企業品牌設計！包含品牌吉祥物實體化、產品結構原型、展覽大型公仔樣品等。提供展示級模型製作服務。",
     specs: [
       { label: "建議尺寸", value: "15cm / 18cm 或更大客製規格" },
       { label: "建模需求", value: "視情況 (若有原廠 3D CAD 檔則不需重新建模)" },

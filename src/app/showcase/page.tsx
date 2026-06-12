@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import QChan from "@/components/QChan";
@@ -74,10 +74,21 @@ const caseStudies = [
 
 export default function ShowcasePage() {
   const [activeCategory, setActiveCategory] = useState("全部案例");
+  const [dynamicCases, setDynamicCases] = useState<typeof caseStudies>([]);
+
+  // 讀取後台 /studio 新增的作品案例
+  useEffect(() => {
+    fetch("/api/cases", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => Array.isArray(data) && setDynamicCases(data))
+      .catch(() => {});
+  }, []);
+
+  const allCases = [...dynamicCases, ...caseStudies];
 
   const filteredCases = activeCategory === "全部案例"
-    ? caseStudies
-    : caseStudies.filter((c) => c.category === activeCategory);
+    ? allCases
+    : allCases.filter((c) => c.category === activeCategory);
 
   return (
     <div className="w-full py-12 md:py-16 bg-brand-cream/20">

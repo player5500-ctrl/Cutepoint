@@ -35,7 +35,7 @@ const servicesList = [
   },
   {
     title: "企業展示樣品",
-    desc: "客製化吉祥物、產品原型或展覽模型，以最高品質呈現品牌細節，助力商務展示。",
+    desc: "客製化吉祥物、產品原型或展覽模型，呈現品牌特色，助力商務展示。",
     icon: (
       <svg className="w-8 h-8 text-brand-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -45,7 +45,7 @@ const servicesList = [
   },
   {
     title: "大量列印服務",
-    desc: "工廠級 3D 列印機隊，支援小規模或大批量快速生產，品質穩定、交期準時。",
+    desc: "工廠級 3D 列印機隊，支援小規模或大批量快速生產，交期準時。",
     icon: (
         <svg className="w-8 h-8 text-brand-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 14v6m-3-3h6M6 10h2m-2 4h2m-2 4h2m10-14L5 21" />
@@ -225,7 +225,7 @@ export default function Home() {
                 為什麼選擇 萌點3D？
               </h2>
               <p className="text-sm sm:text-base text-brand-muted leading-relaxed font-medium">
-                我們深知每一個公仔對您而言都代表著一份回憶或心血。因此，我們堅守職人精神，讓每個成品都擁有完美質感！
+                我們深知每一個公仔對您而言都代表著一份回憶或心血。因此，我們堅守職人精神，讓每個成品都擁有各自特色！
               </p>
 
               <div className="space-y-4 pt-2">
@@ -235,7 +235,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h4 className="text-base font-bold text-brand-dark">複合基石材</h4>
-                    <p className="text-sm text-brand-muted leading-relaxed font-medium">採用全彩石膏粉末列印，材質安全無毒、色彩直出飽和，適合展示與長久收藏。</p>
+                    <p className="text-sm text-brand-muted leading-relaxed font-medium">採用全彩石膏粉末列印，色彩直出飽和，適合展示與收藏。</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
