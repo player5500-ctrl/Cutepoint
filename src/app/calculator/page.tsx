@@ -37,7 +37,7 @@ const productTypes = [
   { name: "角色/AI圖轉公仔", factor: 1.0, defaultOwnFile: false },
   { name: "企業展示樣品", factor: 1.2, defaultOwnFile: false }, // 企業禮品組 NT$5,000 起
   { name: "大量列印服務", factor: 0.7, defaultOwnFile: true }, // 自備檔代印
-  { name: "3D 建模與修圖服務", factor: 1.0, defaultOwnFile: false }, // 數位檔交付
+  { name: "文創模型", factor: 1.0, defaultOwnFile: false }, // 地方文創、IP 商品化、桌遊配件
 ];
 
 const sizes = ["6cm", "8cm", "10cm", "12cm", "15cm", "18cm"];
@@ -81,40 +81,15 @@ function CalculatorContent() {
     const matched = productTypes.find((t) => t.name === typeName);
     if (matched) {
       setHasOwnFile(matched.defaultOwnFile);
-      if (typeName === "3D 建模與修圖服務") {
-        setNeedGlassCase(false);
-        setNeedNameBase(false);
-        setNeedGiftBox(false);
-      }
     }
   };
 
-  const isDigitalService = productType === "3D 建模與修圖服務";
   const isBulkProject = quantity === "20 件以上"; // 大量訂單採專案另估
 
   // ====== 估價公式（依企劃書 V7）======
   const calculateEstimate = () => {
     const tier = sizeTier(size);
     const selectedType = productTypes.find((t) => t.name === productType) || productTypes[0];
-
-    // 3D 建模與修圖服務：數位檔交付，不依尺寸計價
-    if (isDigitalService) {
-      let low = 1200;
-      let high = 2500;
-      if (complexity === "複雜") {
-        low = Math.round(low * 1.5);
-        high = Math.round(high * 1.5);
-      } else if (complexity === "簡單") {
-        high = 1800;
-      }
-      let days = complexity === "複雜" ? 6 : 4;
-      if (isUrgent) {
-        low += urgentFees[0];
-        high += urgentFees[0];
-        days = Math.max(3, Math.ceil(days * 0.6));
-      }
-      return { low, high, days };
-    }
 
     // 1. 尺寸基礎售價（含照片轉 Q 版建模）
     let unitLow = sizePricing[size].low * selectedType.factor;
@@ -275,11 +250,9 @@ function CalculatorContent() {
                 );
               })}
             </div>
-            {!isDigitalService && (
-              <p className="text-[11px] text-brand-muted font-medium">
-                {size} 建議售價 NT${sizePricing[size].low.toLocaleString()}–{sizePricing[size].high.toLocaleString()}（已含照片轉 Q 版建模）
-              </p>
-            )}
+            <p className="text-[11px] text-brand-muted font-medium">
+              {size} 建議售價 NT${sizePricing[size].low.toLocaleString()}–{sizePricing[size].high.toLocaleString()}（已含照片轉 Q 版建模）
+            </p>
           </div>
 
           {/* Quantity */}
@@ -375,7 +348,7 @@ function CalculatorContent() {
         </div>
 
         {/* 6. Add-ons（表11 加價項目） */}
-        {!isDigitalService && (
+        {(
           <div className="space-y-3">
             <label className="text-sm font-extrabold text-brand-dark tracking-wider flex items-center justify-between">
               <span>6. 加購項目（打造完整紀念禮）</span>
@@ -509,14 +482,12 @@ function CalculatorContent() {
                 <span>複雜度：</span>
                 <span className="font-bold">{complexity}</span>
               </div>
-              {!isDigitalService && (
-                <div className="flex justify-between">
-                  <span>加購：</span>
-                  <span className="font-bold">
-                    {[needGlassCase && "玻璃罩", needNameBase && "名牌底座", needGiftBox && "禮盒"].filter(Boolean).join("、") || "無"}
-                  </span>
-                </div>
-              )}
+              <div className="flex justify-between">
+                <span>加購：</span>
+                <span className="font-bold">
+                  {[needGlassCase && "玻璃罩", needNameBase && "名牌底座", needGiftBox && "禮盒"].filter(Boolean).join("、") || "無"}
+                </span>
+              </div>
             </div>
 
             {/* Proceed to Official Inquiry button */}

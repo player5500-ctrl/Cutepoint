@@ -15,7 +15,7 @@ const servicesList = [
   },
   {
     title: "寵物公仔",
-    desc: "將心愛的毛孩實體化！精確捕捉寵物的神態與毛流，留下永久保存的珍貴紀念。",
+    desc: "將心愛的毛孩實體化！捕捉寵物的神態與毛流，留下永久保存的珍貴紀念。",
     icon: (
       <svg className="w-8 h-8 text-brand-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -55,8 +55,8 @@ const servicesList = [
     bg: "bg-brand-yellow-light/40",
   },
   {
-    title: "3D 建模與修圖服務",
-    desc: "專業 3D 雕塑師團隊，為您的 3D 檔案進行修改、減面、分件或協助將平面手稿直接建模。",
+    title: "文創模型",
+    desc: "地方文創、桌遊配件、IP 商品化與活動紀念品，從設計圖到實體模型，小量到批量皆可承接。",
     icon: (
       <svg className="w-8 h-8 text-brand-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 00-2 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -87,7 +87,7 @@ export default function Home() {
                 變成觸手可及的 <span className="text-brand-orange bg-gradient-to-r from-brand-orange to-red-400 bg-clip-text text-transparent">3D 公仔</span>！
               </h1>
               <p className="text-base sm:text-lg text-brand-muted max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
-                不論是您珍愛的寵物、自創的角色設計、AI生成的圖片，還是商務展示樣品，萌點3D 都能為您將想像精確還原，打造充滿溫度的專屬成品。
+                不論是您珍愛的寵物、自創的角色設計、AI生成的圖片，還是商務展示樣品，萌點3D 都能為您將想像還原，打造充滿溫度的專屬成品。
               </p>
 
               {/* Action Buttons */}
@@ -225,7 +225,7 @@ export default function Home() {
                 為什麼選擇 萌點3D？
               </h2>
               <p className="text-sm sm:text-base text-brand-muted leading-relaxed font-medium">
-                我們深知每一個公仔對您而言都代表著一份回憶或心血。因此，我們堅持精細化製作，讓每個成品都擁有完美質感！
+                我們深知每一個公仔對您而言都代表著一份回憶或心血。因此，我們堅守職人精神，讓每個成品都擁有完美質感！
               </p>
 
               <div className="space-y-4 pt-2">
@@ -234,7 +234,7 @@ export default function Home() {
                     ✓
                   </div>
                   <div>
-                    <h4 className="text-base font-bold text-brand-dark">安全且無毒的材料</h4>
+                    <h4 className="text-base font-bold text-brand-dark">複合基石材</h4>
                     <p className="text-sm text-brand-muted leading-relaxed font-medium">採用全彩石膏粉末列印，材質安全無毒、色彩直出飽和，適合展示與長久收藏。</p>
                   </div>
                 </div>
@@ -243,8 +243,8 @@ export default function Home() {
                     ✓
                   </div>
                   <div>
-                    <h4 className="text-base font-bold text-brand-dark">完整紀念禮品套組</h4>
-                    <p className="text-sm text-brand-muted leading-relaxed font-medium">可加購名牌底座、玻璃罩與禮盒包裝，刻上姓名與祝福。送出的不只是公仔，而是一份完整的紀念禮。</p>
+                    <h4 className="text-base font-bold text-brand-dark">可加購紀念禮品套組</h4>
+                    <p className="text-sm text-brand-muted leading-relaxed font-medium">可加購玻璃罩與禮盒包裝，送出的不只是公仔，而是一份完整的紀念禮。</p>
                   </div>
                 </div>
                 <div className="flex gap-4">

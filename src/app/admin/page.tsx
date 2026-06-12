@@ -429,7 +429,7 @@ export default function AdminPage() {
                 <option value="角色/AI圖轉公仔">角色/AI圖轉公仔</option>
                 <option value="企業展示樣品">企業展示樣品</option>
                 <option value="大量列印服務">大量列印服務</option>
-                <option value="3D 建模與修圖服務">3D 建模與修圖服務</option>
+                <option value="文創模型">文創模型</option>
               </select>
             </div>
           </div>
