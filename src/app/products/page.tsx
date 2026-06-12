@@ -53,7 +53,7 @@ const products = [
       { label: "建議尺寸", value: "15cm / 18cm 或更大客製規格" },
       { label: "建模需求", value: "視情況 (若有原廠 3D CAD 檔則不需重新建模)" },
       { label: "製作天數", value: "約 7 - 14 個工作天" },
-      { label: "注意事項", value: "可提供 STEP、IGS、STL 等工業格式檔案進行直接處理與列印。" },
+      { label: "注意事項", value: "可提供 STL 檔案進行直接處理與列印。" },
     ],
     bg: "bg-brand-peach-light/40",
     tagColor: "text-pink-600 bg-pink-50",

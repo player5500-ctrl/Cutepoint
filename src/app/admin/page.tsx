@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import AdminGate, { getAdminKey } from "@/components/AdminGate";
+import CaseManager from "@/components/CaseManager";
 
 interface Inquiry {
   id: string;
@@ -520,6 +521,9 @@ function AdminPanel() {
             </div>
           )}
         </div>
+
+        {/* 作品案例管理區塊 */}
+        <CaseManager />
       </div>
 
       {/* Edit Detail Modal Dialog */}
