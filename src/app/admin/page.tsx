@@ -664,7 +664,7 @@ export default function AdminPage() {
 
                   {/* Assignee */}
                   <div className="space-y-1">
-                    <label htmlFor="editAssignee" className="text-[10px] text-gray-400 block font-bold">指派負責人 / 雕塑師</label>
+                    <label htmlFor="editAssignee" className="text-[10px] text-gray-400 block font-bold">指派負責人</label>
                     <input
                       id="editAssignee"
                       type="text"

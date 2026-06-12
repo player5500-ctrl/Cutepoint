@@ -39,7 +39,7 @@ const products = [
       { label: "建議尺寸", value: "10cm / 12cm / 15cm / 18cm" },
       { label: "建模需求", value: "需要 (從平面圖像建立完整三維骨架與面網)" },
       { label: "製作天數", value: "約 14 - 20 個工作天" },
-      { label: "注意事項", value: "若有細部設定(如背面、配件)請一併附上，或由我們的雕塑師為您做延伸設計。" },
+      { label: "注意事項", value: "若有細部設定(如背面、配件)請一併附上，或由我們為您做延伸設計。" },
     ],
     bg: "bg-orange-50",
     tagColor: "text-brand-orange bg-orange-100",

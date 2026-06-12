@@ -211,7 +211,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/60 via-transparent to-transparent flex items-end p-8">
                 <div className="text-white space-y-1">
                   <span className="text-xs text-brand-yellow font-extrabold tracking-wider">安全材質 × 職人手工 × 價格透明</span>
-                  <h3 className="text-xl font-bold">雕塑師逐件手工修整，每一份紀念都安心交付</h3>
+                  <h3 className="text-xl font-bold">逐件細心修整，每一份紀念都安心交付</h3>
                 </div>
               </div>
             </div>

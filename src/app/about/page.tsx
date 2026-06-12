@@ -71,7 +71,7 @@ export default function AboutPage() {
             <span className="text-3xl block">🎨</span>
             <h3 className="text-lg font-bold text-brand-dark">職人手工修模的溫度</h3>
             <p className="text-xs sm:text-sm text-brand-muted leading-relaxed font-semibold">
-              每個公仔皆由多年美術功底的 3D 雕塑師親自操刀，從骨架比例、臉部神韻到姿態重心，運用專業修模技術逐層調整，讓作品不只是像，更帶著本人的神采與溫度。
+              每個公仔從骨架比例、臉部神韻到姿態重心，皆運用專業修模技術逐層調整，讓作品不只是像，更帶著本人的神采與溫度。
             </p>
           </div>
           <div className="bg-white rounded-3xl border border-brand-border/60 p-6 shadow-sm text-center space-y-3">
