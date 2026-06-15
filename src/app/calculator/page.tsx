@@ -95,11 +95,7 @@ function CalculatorContent() {
     let unitLow = sizePricing[size].low * selectedType.factor;
     let unitHigh = sizePricing[size].high * selectedType.factor;
 
-    // 2. 自備 3D 檔折扣（售價已含基本建模，自備檔享 9 折）
-    if (hasOwnFile) {
-      unitLow *= 0.9;
-      unitHigh *= 0.9;
-    }
+    // 2. 自備 3D 檔（售價已含基本建模，自備檔不另享折扣）
 
     // 3. 複雜款加收場景/配件費（表11：300–1,500）
     if (complexity === "複雜") {
@@ -131,10 +127,10 @@ function CalculatorContent() {
     let qtyFactor = 1.0;
     let qtyNumber = 1;
     if (quantity === "2–5 件") {
-      qtyFactor = 0.95;
+      qtyFactor = 1.0; // 取消數量折扣
       qtyNumber = 3; // 區間代表值
     } else if (quantity === "6–20 件") {
-      qtyFactor = 0.9;
+      qtyFactor = 1.0; // 取消數量折扣
       qtyNumber = 12; // 區間代表值
     }
 
@@ -312,7 +308,7 @@ function CalculatorContent() {
                   : "border-brand-border/80 bg-white hover:bg-brand-cream text-brand-muted"
               }`}
             >
-              自備 3D 檔（9 折）
+              自備 3D 檔
             </button>
           </div>
         </div>
@@ -539,7 +535,7 @@ export default function CalculatorPage() {
         <div className="max-w-3xl mx-auto mb-12">
           <QChan
             image="/assets/qchan/q_calc.gif"
-            text="來試算你的公仔製作預算吧！我們的售價已經包含照片轉 Q 版的基本建模囉！如果你已經有自己的 3D 檔，選「自備 3D 檔」還能打 9 折唷 🐾！想讓禮物更完整，可以加購玻璃罩、名牌底座跟禮盒包裝。試算好之後點擊「前往正式詢價」，資料會自動帶過去，不用重新填寫唷！"
+            text="來試算你的公仔製作預算吧！我們的售價已經包含照片轉 Q 版的基本建模囉！如果你已經有自己的 3D 檔，選「自備 3D 檔」可以省去建模往返、加快交期唷 🐾！想讓禮物更完整，可以加購玻璃罩、名牌底座跟禮盒包裝。試算好之後點擊「前往正式詢價」，資料會自動帶過去，不用重新填寫唷！"
             position="left"
           />
         </div>
