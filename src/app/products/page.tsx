@@ -1,95 +1,49 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import QChan from "@/components/QChan";
 
-const products = [
-  {
-    id: "chibi",
-    name: "Q版人像公仔",
-    desc: "把您或親友的照片，轉化為風格活潑、五官討喜的 Q 版立體公仔。最適合婚禮小物、生日賀禮、畢業紀念或個人收藏。",
-    specs: [
-      { label: "建議尺寸", value: "8cm / 10cm / 12cm" },
-      { label: "建模需求", value: "通常需要 (由提供之 2D 照片進行 3D 建模)" },
-      { label: "製作天數", value: "約 10 - 15 個工作天" },
-      { label: "注意事項", value: "照片請儘量提供正側面、清晰且五官輪廓無遮擋之影像。" },
-    ],
-    bg: "bg-brand-peach-light",
-    tagColor: "text-brand-orange bg-brand-peach-light",
-    image: "/assets/q_jiang.jpg",
-  },
-  {
-    id: "pet",
-    name: "寵物公仔",
-    desc: "為您心愛的貓咪、狗狗或各類毛孩製作專屬的仿真或萌化公仔，讓可愛的身影永遠陪伴身旁。",
-    specs: [
-      { label: "建議尺寸", value: "6cm / 8cm / 10cm" },
-      { label: "建模需求", value: "通常需要 (需呈現寵物獨特神韻)" },
-      { label: "製作天數", value: "約 12 - 18 個工作天" },
-      { label: "注意事項", value: "歡迎提供多角度的細節照，有助於更精準還原。" },
-    ],
-    bg: "bg-brand-yellow-light",
-    tagColor: "text-amber-600 bg-brand-yellow-light",
-    image: "/assets/q_jiang.jpg",
-  },
-  {
-    id: "ai-character",
-    name: "角色/AI圖轉公仔",
-    desc: "無論是自創的插畫人設、二次元角色，還是近期透過 Midjourney / Stable Diffusion 等 AI 生成的精美圖像，我們都能將 2D 平面視覺轉化為 3D 立體模型！",
-    specs: [
-      { label: "建議尺寸", value: "10cm / 12cm / 15cm / 18cm" },
-      { label: "建模需求", value: "需要 (從平面圖像建立完整三維骨架與面網)" },
-      { label: "製作天數", value: "約 14 - 20 個工作天" },
-      { label: "注意事項", value: "若有細部設定(如背面、配件)請一併附上，或由我們為您做延伸設計。" },
-    ],
-    bg: "bg-orange-50",
-    tagColor: "text-brand-orange bg-orange-100",
-    image: "/assets/q_jiang.jpg",
-  },
-  {
-    id: "corporate",
-    name: "企業展示樣品",
-    desc: "專為企業品牌設計！包含品牌吉祥物實體化、產品結構原型、展覽大型公仔樣品等。提供展示級模型製作服務。",
-    specs: [
-      { label: "建議尺寸", value: "15cm / 18cm 或更大客製規格" },
-      { label: "建模需求", value: "視情況 (若有原廠 3D CAD 檔則不需重新建模)" },
-      { label: "製作天數", value: "約 7 - 14 個工作天" },
-      { label: "注意事項", value: "可提供 STL 檔案進行直接處理與列印。" },
-    ],
-    bg: "bg-brand-peach-light/40",
-    tagColor: "text-pink-600 bg-pink-50",
-    image: "/assets/q_jiang.jpg",
-  },
-  {
-    id: "bulk",
-    name: "大量列印服務",
-    desc: "針對文創商品、工作室配件、學生畢業製作或桌遊棋子等，提供小批量或大批量的快速代印服務。多台設備同時運作，確保產能與速度。",
-    specs: [
-      { label: "適用尺寸", value: "6cm ~ 18cm 皆可" },
-      { label: "建模需求", value: "不需要 (客戶需自行提供 STL/OBJ 格式之 3D 檔案)" },
-      { label: "製作天數", value: "視數量而定 (3 - 10 工作天起)" },
-      { label: "注意事項", value: "請確保提供的檔案已完成閉合(Manifold)，且無破面結構。" },
-    ],
-    bg: "bg-brand-yellow-light/40",
-    tagColor: "text-yellow-700 bg-yellow-100",
-    image: "/assets/q_jiang.jpg",
-  },
-  {
-    id: "cultural-creative",
-    name: "文創模型",
-    desc: "將地方特色、品牌 IP 與文創設計轉化為立體模型！舉凡吉祥物、桌遊配件、活動限定紀念品與地方觀光商品，我們都能協助商品化，小量到批量皆可承接。",
-    specs: [
-      { label: "建議尺寸", value: "6cm ~ 18cm 皆可" },
-      { label: "建模需求", value: "視情況 (可由平面設計圖建模，或自備 3D 檔)" },
-      { label: "製作天數", value: "約 7 - 14 個工作天" },
-      { label: "注意事項", value: "歡迎學校、工作室與地方單位提案合作，批量訂單可採專案報價。" },
-    ],
-    bg: "bg-emerald-50",
-    tagColor: "text-emerald-600 bg-emerald-100",
-    image: "/assets/q_jiang.jpg",
-  },
+interface ProductSpec {
+  label: string;
+  value: string;
+}
+
+interface ProductItem {
+  id: string;
+  name: string;
+  desc: string;
+  specs: ProductSpec[];
+  image: string;
+  bg?: string;
+  tagColor?: string;
+}
+
+// 後台未指定配色時，依序套用的預設色盤
+const palette = [
+  { bg: "bg-brand-peach-light", tagColor: "text-brand-orange bg-brand-peach-light" },
+  { bg: "bg-brand-yellow-light", tagColor: "text-amber-600 bg-brand-yellow-light" },
+  { bg: "bg-orange-50", tagColor: "text-brand-orange bg-orange-100" },
+  { bg: "bg-brand-peach-light/40", tagColor: "text-pink-600 bg-pink-50" },
+  { bg: "bg-brand-yellow-light/40", tagColor: "text-yellow-700 bg-yellow-100" },
+  { bg: "bg-emerald-50", tagColor: "text-emerald-600 bg-emerald-100" },
 ];
 
 export default function ProductsPage() {
+  const [products, setProducts] = useState<ProductItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/products", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (Array.isArray(data)) setProducts(data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div className="w-full py-12 md:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -110,69 +64,86 @@ export default function ProductsPage() {
         <div className="max-w-3xl mx-auto mb-16">
           <QChan
             image="/assets/qchan/q_board.gif"
-            text="主打的產品都在這裡囉！我們提供 6 大服務項目，每一件作品都由 3D 建模師運用專業修模技術用心完成。現在我們全力聚焦在人偶與寵物的製作，想把你最珍惜的模樣好好留下來！快來看看哪一個項目符合你的需要吧 ✨"
+            text="主打服務都在這裡囉！萌點3D 提供多項製作項目，由 3D處理人員協助檔案整理、修模與列印前確認。從人像、寵物到角色模型，我們都會把細節整理清楚，讓珍貴的模樣更安心地被留下來 ✨"
             position="left"
           />
         </div>
 
         {/* Product Cards Layout */}
-        <div className="space-y-12">
-          {products.map((product, idx) => (
-            <div
-              key={product.id}
-              id={`service-${idx}`}
-              className="bg-white rounded-3xl border border-brand-border/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 grid grid-cols-1 lg:grid-cols-12"
-            >
-              {/* Product Visual */}
-              <div className="lg:col-span-4 relative bg-brand-cream/40 min-h-[260px] flex items-center justify-center p-6 border-b lg:border-b-0 lg:border-r border-brand-border/40">
-                <div className="relative w-48 h-48 rounded-2xl overflow-hidden shadow-inner border border-brand-border">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                {/* Floating badge */}
-                <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-black ${product.tagColor}`}>
-                  NO.0{idx + 1}
-                </div>
-              </div>
+        {loading ? (
+          <div className="py-20 flex justify-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-orange" />
+          </div>
+        ) : products.length === 0 ? (
+          <div className="text-center py-20 text-sm text-brand-muted font-medium">
+            目前尚未上架產品項目，請稍後再回來看看 🐾
+          </div>
+        ) : (
+          <div className="space-y-12">
+            {products.map((product, idx) => {
+              const colors = palette[idx % palette.length];
+              const bg = product.bg || colors.bg;
+              const tagColor = product.tagColor || colors.tagColor;
+              return (
+                <div
+                  key={product.id}
+                  id={`service-${idx}`}
+                  className="bg-white rounded-3xl border border-brand-border/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 grid grid-cols-1 lg:grid-cols-12"
+                >
+                  {/* Product Visual */}
+                  <div className={`lg:col-span-4 relative ${bg} min-h-[260px] flex items-center justify-center p-6 border-b lg:border-b-0 lg:border-r border-brand-border/40`}>
+                    <div className="relative w-48 h-48 rounded-2xl overflow-hidden shadow-inner border border-brand-border">
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    {/* Floating badge */}
+                    <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-black ${tagColor}`}>
+                      NO.{String(idx + 1).padStart(2, "0")}
+                    </div>
+                  </div>
 
-              {/* Product Info */}
-              <div className="lg:col-span-8 p-6 sm:p-10 flex flex-col justify-between space-y-6">
-                <div className="space-y-4">
-                  <h2 className="text-2xl sm:text-3xl font-black text-brand-dark flex items-center gap-3">
-                    {product.name}
-                  </h2>
-                  <p className="text-sm sm:text-base text-brand-muted leading-relaxed font-medium">
-                    {product.desc}
-                  </p>
+                  {/* Product Info */}
+                  <div className="lg:col-span-8 p-6 sm:p-10 flex flex-col justify-between space-y-6">
+                    <div className="space-y-4">
+                      <h2 className="text-2xl sm:text-3xl font-black text-brand-dark flex items-center gap-3">
+                        {product.name}
+                      </h2>
+                      <p className="text-sm sm:text-base text-brand-muted leading-relaxed font-medium whitespace-pre-line">
+                        {product.desc}
+                      </p>
 
-                  {/* Specifications Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-brand-border/40">
-                    {product.specs.map((spec, i) => (
-                      <div key={i} className="flex flex-col space-y-1">
-                        <span className="text-xs font-extrabold text-brand-orange tracking-wider">{spec.label}</span>
-                        <span className="text-sm text-brand-dark font-medium leading-relaxed">{spec.value}</span>
-                      </div>
-                    ))}
+                      {/* Specifications Grid */}
+                      {product.specs.length > 0 && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-brand-border/40">
+                          {product.specs.map((spec, i) => (
+                            <div key={i} className="flex flex-col space-y-1">
+                              <span className="text-xs font-extrabold text-brand-orange tracking-wider">{spec.label}</span>
+                              <span className="text-sm text-brand-dark font-medium leading-relaxed">{spec.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Calculator link */}
+                    <div className="pt-4 flex justify-end">
+                      <Link
+                        href={`/calculator?type=${encodeURIComponent(product.name)}`}
+                        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-sm font-extrabold text-white bg-brand-orange hover:bg-brand-orange-hover shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+                      >
+                        試算此項目費用 ➔
+                      </Link>
+                    </div>
                   </div>
                 </div>
-
-                {/* Calculator link */}
-                <div className="pt-4 flex justify-end">
-                  <Link
-                    href={`/calculator?type=${encodeURIComponent(product.name)}`}
-                    className="inline-flex items-center justify-center px-6 py-3 rounded-full text-sm font-extrabold text-white bg-brand-orange hover:bg-brand-orange-hover shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
-                  >
-                    試算此項目費用 ➔
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
