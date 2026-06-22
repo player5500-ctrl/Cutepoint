@@ -36,7 +36,7 @@ const productTypes = [
   { name: "寵物公仔", factor: 1.0, defaultOwnFile: false },
   { name: "角色/AI圖轉公仔", factor: 1.0, defaultOwnFile: false },
   { name: "企業展示樣品", factor: 1.2, defaultOwnFile: false }, // 企業禮品組 NT$5,000 起
-  { name: "大量列印服務", factor: 0.7, defaultOwnFile: true }, // 自備檔代印
+  { name: "大量列印服務", factor: 1.0, defaultOwnFile: true }, // 自備檔代印
   { name: "文創模型", factor: 1.0, defaultOwnFile: false }, // 地方文創、IP 商品化、桌遊配件
 ];
 
@@ -95,7 +95,7 @@ function CalculatorContent() {
     let unitLow = sizePricing[size].low * selectedType.factor;
     let unitHigh = sizePricing[size].high * selectedType.factor;
 
-    // 2. 自備 3D 檔（售價已含基本建模，自備檔不另享折扣）
+    // 2. 自備 3D 檔（售價已含基本建模，自備檔不另調整價格）
 
     // 3. 複雜款加收場景/配件費（表11：300–1,500）
     if (complexity === "複雜") {
@@ -123,19 +123,16 @@ function CalculatorContent() {
       if (unitHigh < unitLow + 500) unitHigh = unitLow + 1000;
     }
 
-    // 5. 數量（小批量優惠；20 件以上專案另估）
-    let qtyFactor = 1.0;
+    // 5. 數量（以區間代表值估算；20 件以上專案另估）
     let qtyNumber = 1;
     if (quantity === "2–5 件") {
-      qtyFactor = 1.0; // 取消數量折扣
       qtyNumber = 3; // 區間代表值
     } else if (quantity === "6–20 件") {
-      qtyFactor = 1.0; // 取消數量折扣
       qtyNumber = 12; // 區間代表值
     }
 
-    let totalLow = Math.round(unitLow * qtyFactor * qtyNumber);
-    let totalHigh = Math.round(unitHigh * qtyFactor * qtyNumber);
+    let totalLow = Math.round(unitLow * qtyNumber);
+    let totalHigh = Math.round(unitHigh * qtyNumber);
 
     // 6. 加急費（表11：300–800，每張訂單）
     if (isUrgent) {
@@ -150,7 +147,7 @@ function CalculatorContent() {
     if (hasOwnFile) baseDays -= 2; // 自備 3D 檔可省去建模與確認往返
     if (quantity === "2–5 件") baseDays += 2;
     else if (quantity === "6–20 件") baseDays += 4;
-    let finalDays = isUrgent ? Math.ceil(baseDays * 0.6) : baseDays;
+    let finalDays = baseDays;
     if (finalDays < 3) finalDays = 3;
 
     // 最低價保護
@@ -161,6 +158,25 @@ function CalculatorContent() {
   };
 
   const { low, high, days } = calculateEstimate();
+
+  const LINE_URL = "https://line.me/ti/p/_GL-WZNcN_";
+  const [lineCopied, setLineCopied] = useState(false);
+
+  // 一鍵把試算結果帶到 LINE，縮短轉換路徑
+  const handleAskOnLine = () => {
+    const addons = [needGlassCase && "玻璃罩", needNameBase && "名牌底座", needGiftBox && "禮盒"].filter(Boolean).join("、");
+    const summary = isBulkProject
+      ? `Hi Q醬！我想詢問大量訂單：${productType}，尺寸 ${size}，數量 ${quantity}，想請你幫我專案報價，謝謝！`
+      : `Hi Q醬！我用萌點3D網站試算好了：\n・產品：${productType}\n・尺寸：${size}\n・數量：${quantity}\n・複雜度：${complexity}${addons ? `\n・加購：${addons}` : ""}\n・預估：NT$${low.toLocaleString()}～${high.toLocaleString()}，約 ${days} 個工作天\n想進一步詢問，麻煩你囉！`;
+    try {
+      navigator.clipboard?.writeText(summary);
+      setLineCopied(true);
+      setTimeout(() => setLineCopied(false), 5000);
+    } catch {
+      // 忽略剪貼簿錯誤，仍開啟 LINE
+    }
+    window.open(LINE_URL, "_blank", "noopener,noreferrer");
+  };
 
   // Go to Official Inquiry Form and pass params
   const handleGoToInquiry = () => {
@@ -387,7 +403,7 @@ function CalculatorContent() {
             <label className="text-sm font-extrabold text-brand-dark flex items-center gap-1.5">
               <span>⚡ 設為急件</span>
               <span className="text-[10px] text-brand-orange font-bold bg-brand-peach-light px-2 py-0.5 rounded-full">
-                工期 -40%
+                急件加價
               </span>
             </label>
             <p className="text-xs text-brand-muted font-medium">加急費 NT$300–800（依尺寸與排程），優先安排製作</p>
@@ -499,6 +515,31 @@ function CalculatorContent() {
           </div>
         </div>
 
+        {/* Q醬 一鍵 LINE 詢問：縮短轉換路徑 */}
+        <div className="bg-white rounded-2xl border border-brand-orange/30 p-5 shadow-sm space-y-3">
+          <div className="flex items-start gap-3">
+            <Image src="/assets/qchan/q_wave.gif" alt="Q醬揮手" width={46} height={46} className="rounded-full border-2 border-brand-orange bg-white flex-shrink-0" />
+            <div className="space-y-0.5">
+              <p className="text-sm font-extrabold text-brand-dark">Q醬幫你預估好囉！</p>
+              <p className="text-xs text-brand-muted font-medium leading-relaxed">
+                要不要直接問問看？加 Q醬 LINE，把試算結果傳給我們，馬上幫你確認細節與正式報價 🐾
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleAskOnLine}
+            className="w-full py-3.5 px-6 rounded-full text-base font-extrabold text-white bg-[#06C755] hover:brightness-95 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+          >
+            💬 加 Q醬 LINE 直接問
+          </button>
+          {lineCopied && (
+            <p className="text-[11px] text-center text-brand-orange font-bold">
+              ✅ 已幫你複製試算內容，加好友後貼給 Q醬就可以囉！
+            </p>
+          )}
+        </div>
+
         {/* Warning notification */}
         <div className="bg-white rounded-2xl border border-brand-border/60 p-5 shadow-sm">
           <h4 className="text-xs font-extrabold text-brand-orange tracking-widest uppercase mb-2 flex items-center gap-2">
@@ -535,7 +576,7 @@ export default function CalculatorPage() {
         <div className="max-w-3xl mx-auto mb-12">
           <QChan
             image="/assets/qchan/q_calc.gif"
-            text="來試算你的公仔製作預算吧！我們的售價已經包含照片轉 Q 版的基本建模囉！如果你已經有自己的 3D 檔，選「自備 3D 檔」可以省去建模往返、加快交期唷 🐾！想讓禮物更完整，可以加購玻璃罩、名牌底座跟禮盒包裝。試算好之後點擊「前往正式詢價」，資料會自動帶過去，不用重新填寫唷！"
+            text="來試算你的公仔製作預算吧！售價已包含照片轉 Q 版的基本建模；若你已準備好 3D 檔，也可以選擇「自備 3D 檔」，方便 3D處理人員更快確認檔案狀態🐾。想讓禮物更完整，還能加購玻璃罩、名牌底座與禮盒包裝。試算後點擊「前往正式詢價」，資料會自動帶入表單。"
             position="left"
           />
         </div>
