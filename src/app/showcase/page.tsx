@@ -15,62 +15,15 @@ const categories = [
   "文創模型",
 ];
 
-const caseStudies = [
-  {
-    id: 1,
-    title: "森林系婚禮 Q版人像對偶",
-    category: "Q版人像公仔",
-    desc: "從新人的婚紗照出發，把兩人最幸福的模樣化成 12cm Q版公仔，在簽到桌迎接每一位賓客，也成為親友帶回家的暖心紀念。",
-    size: "12cm",
-    days: "14天",
-    img: "/assets/q_jiang.jpg",
-  },
-  {
-    id: 2,
-    title: "英國短毛貓「波波」紀念公仔",
-    category: "寵物公仔",
-    desc: "波波圓潤的腮幫子與無辜大眼，我們都用心留了下來，再以手工噴塗還原毛色，讓飼主能繼續把最愛的毛孩留在身邊。",
-    size: "8cm",
-    days: "12天",
-    img: "/assets/q_jiang.jpg",
-  },
-  {
-    id: 3,
-    title: "AI 生成圖「機械精靈」立體化",
-    category: "角色/AI圖轉公仔",
-    desc: "客戶用 Midjourney 畫出心中的科幻角色，我們的 3D 師傅以專業建模將平面圖轉為立體結構，分件列印組裝，讓想像第一次真正站在眼前。",
-    size: "15cm",
-    days: "18天",
-    img: "/assets/q_jiang.jpg",
-  },
-  {
-    id: 4,
-    title: "「小藍創投」品牌吉祥物公仔",
-    category: "企業展示樣品",
-    desc: "為創投公司打造展示廳的迎賓吉祥物。我們將企業 LOGO 立體化，以簡潔現代的幾何線條，傳達品牌的專業與親和力。",
-    size: "18cm",
-    days: "10天",
-    img: "/assets/q_jiang.jpg",
-  },
-  {
-    id: 5,
-    title: "桌遊「奇幻王國」客製模型配件",
-    category: "大量列印服務",
-    desc: "桌遊設計工作室委託的 120 套小兵配件代印，以工業級全彩石膏粉末設備批量印製，專業把關卡榫契合度與色彩一致性，如期交付。",
-    size: "6cm",
-    days: "7天",
-    img: "/assets/q_jiang.jpg",
-  },
-  {
-    id: 6,
-    title: "原創繪本角色「鯛魚燒貓貓」文創模型",
-    category: "文創模型",
-    desc: "將平面手繪稿轉為立體文創模型，從建模、面網優化到全彩列印，讓繪本角色走進實體收藏的下一段旅程。",
-    size: "10cm",
-    days: "7天",
-    img: "/assets/q_jiang.jpg",
-  },
-];
+const caseStudies: {
+  id: number;
+  title: string;
+  category: string;
+  desc: string;
+  size: string;
+  days: string;
+  img: string;
+}[] = [];
 
 export default function ShowcasePage() {
   const [activeCategory, setActiveCategory] = useState("全部案例");
@@ -103,7 +56,7 @@ export default function ShowcasePage() {
             作品案例展示
           </h1>
           <p className="text-sm text-brand-muted font-medium">
-            每一件作品背後，都有一段顧客想留住的故事。我們用專業的 3D 技術，陪伴大家把心中重要的人事物，化成能捧在手心的溫暖。
+            每一件作品背後，都有顧客想留住的故事。我們用專業 3D 技術，陪你把重要的人事物化成能捧在手心的紀念。
           </p>
         </div>
 
@@ -111,7 +64,7 @@ export default function ShowcasePage() {
         <div className="max-w-3xl mx-auto mb-12">
           <QChan
             image="/assets/qchan/q_wow.gif"
-            text={`你看！這些都是我們師傅跟客人一起完成的公仔唷🐾！\n特別是第三個的「機械精靈」，是客人拿自己用 AI 畫的平面圖片轉出來的呢！我們的 3D 師傅用心把它變成立體，客人收到的時候感動得不得了！\n如果你也想做一個，可以參考這些案例的尺寸跟複雜度，點擊底下的按鈕直接去試算看看喔！`}
+            text={`這些案例，都是客人與萌點3D 一起完成的作品🐾！\n從一張照片開始，經 3D處理人員整理結構、修模與分件後，才變成能收藏的立體公仔。\n你也可以參考尺寸與複雜度，點擊下方按鈕試算類似項目。`}
             position="left"
           />
         </div>
