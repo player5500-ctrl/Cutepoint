@@ -66,6 +66,34 @@ const servicesList = [
   },
 ];
 
+const qVersionStory = [
+  "當初在設計「萌點3D」要怎麼跟大家見面的時候，我們其實想過很多種樣子。",
+  "要不要做得很寫實？要不要像真人一樣精緻？要不要把表情、五官、皮膚細節都做到很像很像？",
+  "後來我們發現，越想「像真人」，反而越容易讓人有一點距離感。有些角色明明很精緻，卻會讓人覺得哪裡怪怪的，這就是常聽到的「恐怖谷效應」。",
+  "所以我們決定，不用最像真人的方式出現。而是用大家比較容易親近的「Q版」跟大家見面。",
+  "Q版不是因為簡單，而是因為它把人最可愛、最有溫度的地方留下來，把太尖銳、太寫實、太有壓力的細節輕輕收起來。",
+  "眼睛可以大一點，表情可以軟一點，身形可以圓一點，情緒也可以更直接一點。不用完美，但很容易讓人想靠近。",
+  "就像第一次見面時，我們不一定需要把所有細節都攤開，有時候，一個溫暖的笑、一個可愛的姿勢，就足夠讓人記住了。",
+  "所以 Q 醬選擇用 Q 版的樣子出場。不是為了裝可愛，而是希望你第一眼看到它的時候，感覺不是「這好像一個模型」，而是「它好像在跟我打招呼」。",
+  "萌點3D想做的，也不只是把人做成公仔。我們更想把一份喜歡、一段回憶、一個角色的溫度，變成可以放在手心裡的小小存在。",
+  "這就是為什麼，我們選擇用 Q 版，和大家見面。 🌿",
+];
+
+const comparisonExamples = [
+  {
+    title: "人像",
+    desc: "真人照片、Q版設計與 3D 列印成品對照",
+    image: "/assets/q-version-person-evolution.jpg",
+    alt: "人物 Q版公仔演化圖",
+  },
+  {
+    title: "寵物",
+    desc: "寵物照片、Q版設計與 3D 列印成品對照",
+    image: "/assets/q-version-pet-evolution.jpg",
+    alt: "寵物 Q版公仔演化圖",
+  },
+];
+
 export default function Home() {
   return (
     <div className="w-full flex flex-col">
@@ -143,6 +171,64 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Q Version Philosophy Section */}
+      <section className="py-20 bg-white border-b border-brand-border/40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+            <div className="lg:col-span-4 space-y-5 lg:sticky lg:top-24">
+              <span className="text-xs font-black tracking-widest text-brand-orange uppercase bg-brand-peach-light px-3 py-1 rounded-full">
+                WHY Q VERSION
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-brand-dark leading-tight">
+                為什麼我們選擇用 Q 版和大家見面？
+              </h2>
+              <p className="text-sm sm:text-base text-brand-muted leading-relaxed font-medium">
+                不是為了把真實變簡單，而是把最容易親近、最有溫度的部分留下來。
+              </p>
+            </div>
+
+            <div className="lg:col-span-8 space-y-8">
+              <div className="bg-brand-cream/35 border border-brand-border/50 rounded-3xl p-6 sm:p-8 md:p-10 shadow-sm">
+                <div className="space-y-4 text-sm sm:text-base text-brand-muted leading-8 font-medium">
+                  {qVersionStory.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 全寬對照圖：放大版面讓圖中文字清晰可讀 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mt-10 lg:mt-14">
+            {comparisonExamples.map((item) => (
+              <div
+                key={item.title}
+                className="rounded-3xl border border-brand-border/60 bg-white p-5 sm:p-6 md:p-8 shadow-sm"
+              >
+                <div className="mb-5">
+                  <span className="text-xs font-black tracking-widest text-brand-orange uppercase">
+                    Q VERSION EVOLUTION
+                  </span>
+                  <h3 className="mt-2 text-2xl sm:text-3xl font-black text-brand-dark">
+                    {item.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-brand-muted font-medium">
+                    {item.desc}
+                  </p>
+                </div>
+                <Image
+                  src={item.image}
+                  alt={item.alt}
+                  width={1536}
+                  height={1024}
+                  className="w-full h-auto rounded-2xl border border-brand-border/50 bg-brand-cream/20"
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>
