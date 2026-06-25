@@ -9,6 +9,7 @@ const navItems = [
   { name: "首頁", path: "/" },
   { name: "產品服務", path: "/products" },
   { name: "作品案例", path: "/showcase" },
+  { name: "印製須知", path: "/printing-notes" },
   { name: "製作流程", path: "/process" },
   { name: "成本試算", path: "/calculator" },
   { name: "關於我們", path: "/about" },

@@ -13,7 +13,7 @@ const categories = [
   "文創模型",
 ];
 
-const sizeOptions = ["6cm", "8cm", "10cm", "12cm", "15cm", "18cm"];
+const sizeOptions = ["4cm", "6cm", "8cm", "10cm", "12cm", "15cm", "18cm"];
 
 interface CaseItem {
   id: string;
@@ -70,6 +70,17 @@ export default function CaseManager() {
   const [imageData, setImageData] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+
+  // 編輯既有案例用的狀態
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editCategory, setEditCategory] = useState(categories[0]);
+  const [editSize, setEditSize] = useState(sizeOptions[2]);
+  const [editDays, setEditDays] = useState("");
+  const [editDesc, setEditDesc] = useState("");
+  const [editImageData, setEditImageData] = useState("");
+  const [editSubmitting, setEditSubmitting] = useState(false);
+  const [editMessage, setEditMessage] = useState("");
 
   const fetchCases = async () => {
     try {
@@ -144,6 +155,75 @@ export default function CaseManager() {
     }
   };
 
+  // 開始編輯：把該筆資料帶入編輯表單
+  const startEdit = (c: CaseItem) => {
+    setEditId(c.id);
+    setEditTitle(c.title);
+    setEditCategory(categories.includes(c.category) ? c.category : categories[0]);
+    setEditSize(c.size);
+    setEditDays(c.days || "");
+    setEditDesc(c.desc || "");
+    setEditImageData("");
+    setEditMessage("");
+  };
+
+  const cancelEdit = () => {
+    setEditId(null);
+    setEditImageData("");
+    setEditMessage("");
+  };
+
+  const handleEditFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setEditImageData(await compressImage(file));
+    } catch {
+      setEditMessage("照片讀取失敗，請換一張試試");
+    }
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editId) return;
+    if (!editTitle) {
+      setEditMessage("請填寫作品名稱");
+      return;
+    }
+    setEditSubmitting(true);
+    setEditMessage("");
+    try {
+      const res = await fetch(`/api/cases/${editId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": getAdminKey(),
+        },
+        body: JSON.stringify({
+          title: editTitle,
+          category: editCategory,
+          size: editSize,
+          days: editDays,
+          desc: editDesc,
+          // 只有換了新圖才帶 imageData；沒換則後端沿用原圖
+          ...(editImageData ? { imageData: editImageData } : {}),
+        }),
+      });
+      if (res.ok) {
+        setEditId(null);
+        setEditImageData("");
+        fetchCases();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setEditMessage(`儲存失敗：${data.error || res.status}`);
+      }
+    } catch {
+      setEditMessage("儲存失敗，請稍後再試");
+    } finally {
+      setEditSubmitting(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -215,19 +295,15 @@ export default function CaseManager() {
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-extrabold text-brand-dark">尺寸 *</label>
-                <input
-                  type="text"
-                  list="size-options"
+                <select
                   value={size}
                   onChange={(e) => setSize(e.target.value)}
-                  placeholder="例：10cm"
-                  className="w-full px-3 py-2.5 rounded-xl border border-brand-border focus:border-brand-orange focus:outline-none text-sm font-medium"
-                />
-                <datalist id="size-options">
+                  className="w-full px-3 py-2.5 rounded-xl border border-brand-border focus:border-brand-orange focus:outline-none text-sm font-medium bg-white"
+                >
                   {sizeOptions.map((s) => (
-                    <option key={s} value={s} />
+                    <option key={s} value={s}>{s}</option>
                   ))}
-                </datalist>
+                </select>
               </div>
             </div>
             <div className="space-y-1.5">
@@ -281,29 +357,145 @@ export default function CaseManager() {
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {cases.map((c) => (
-              <div
-                key={c.id}
-                className="border border-brand-border/60 rounded-2xl overflow-hidden bg-brand-cream/20"
-              >
-                <div className="relative w-full h-36 bg-white">
-                  <Image src={c.img} alt={c.title} fill className="object-cover" />
+            {cases.map((c) =>
+              editId === c.id ? (
+                // —— 編輯模式 ——
+                <form
+                  key={c.id}
+                  onSubmit={handleUpdate}
+                  className="border-2 border-brand-orange/60 rounded-2xl overflow-hidden bg-white p-3 space-y-2.5 sm:col-span-2 lg:col-span-3"
+                >
+                  <p className="text-xs font-black text-brand-orange">✏️ 編輯案例</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {/* 圖片 */}
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-extrabold text-brand-dark">作品照片（不換則留空）</label>
+                      <label className="block w-full h-40 rounded-xl border-2 border-dashed border-brand-border hover:border-brand-orange/60 cursor-pointer overflow-hidden relative bg-brand-cream/30">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={editImageData || c.img}
+                          alt="預覽"
+                          className="w-full h-full object-contain"
+                        />
+                        <input type="file" accept="image/*" onChange={handleEditFile} className="hidden" />
+                      </label>
+                    </div>
+                    {/* 欄位 */}
+                    <div className="space-y-2.5">
+                      <div className="space-y-1">
+                        <label className="text-[11px] font-extrabold text-brand-dark">作品名稱 *</label>
+                        <input
+                          type="text"
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          className="w-full px-3 py-2 rounded-lg border border-brand-border focus:border-brand-orange focus:outline-none text-sm font-medium"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                          <label className="text-[11px] font-extrabold text-brand-dark">類別 *</label>
+                          <select
+                            value={editCategory}
+                            onChange={(e) => setEditCategory(e.target.value)}
+                            className="w-full px-2 py-2 rounded-lg border border-brand-border focus:border-brand-orange focus:outline-none text-sm font-medium bg-white"
+                          >
+                            {categories.map((cat) => (
+                              <option key={cat} value={cat}>{cat}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[11px] font-extrabold text-brand-dark">尺寸 *</label>
+                          <select
+                            value={editSize}
+                            onChange={(e) => setEditSize(e.target.value)}
+                            className="w-full px-2 py-2 rounded-lg border border-brand-border focus:border-brand-orange focus:outline-none text-sm font-medium bg-white"
+                          >
+                            {sizeOptions.map((s) => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
+                            {/* 保留原本不在清單中的舊尺寸值 */}
+                            {!sizeOptions.includes(editSize) && (
+                              <option value={editSize}>{editSize}</option>
+                            )}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[11px] font-extrabold text-brand-dark">製作天數</label>
+                        <input
+                          type="text"
+                          value={editDays}
+                          onChange={(e) => setEditDays(e.target.value)}
+                          placeholder="例：7天"
+                          className="w-full px-3 py-2 rounded-lg border border-brand-border focus:border-brand-orange focus:outline-none text-sm font-medium"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-extrabold text-brand-dark">文案</label>
+                    <textarea
+                      value={editDesc}
+                      onChange={(e) => setEditDesc(e.target.value)}
+                      rows={2}
+                      className="w-full px-3 py-2 rounded-lg border border-brand-border focus:border-brand-orange focus:outline-none text-sm font-medium resize-none"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[11px] font-bold text-brand-muted">{editMessage}</span>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={cancelEdit}
+                        className="px-4 py-2 rounded-full text-xs font-bold text-brand-muted bg-brand-cream hover:bg-brand-border/40 transition-all"
+                      >
+                        取消
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={editSubmitting}
+                        className="px-6 py-2 rounded-full text-xs font-extrabold text-white bg-brand-orange hover:bg-brand-orange-hover shadow-sm transition-all disabled:opacity-50"
+                      >
+                        {editSubmitting ? "儲存中…" : "儲存變更"}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              ) : (
+                // —— 顯示模式 ——
+                <div
+                  key={c.id}
+                  className="border border-brand-border/60 rounded-2xl overflow-hidden bg-brand-cream/20"
+                >
+                  <div className="relative w-full h-36 bg-white">
+                    <Image src={c.img} alt={c.title} fill className="object-cover" />
+                  </div>
+                  <div className="p-3 space-y-1">
+                    <p className="text-sm font-black text-brand-dark truncate">{c.title}</p>
+                    <p className="text-[11px] text-brand-muted font-bold">
+                      {c.category}｜{c.size}{c.days ? `｜${c.days}` : ""}
+                    </p>
+                    <div className="flex gap-3 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => startEdit(c)}
+                        className="text-[11px] font-bold text-brand-orange hover:text-brand-orange-hover"
+                      >
+                        ✏️ 編輯
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(c.id)}
+                        className="text-[11px] font-bold text-red-500 hover:text-red-600"
+                      >
+                        🗑 刪除
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="p-3 space-y-1">
-                  <p className="text-sm font-black text-brand-dark truncate">{c.title}</p>
-                  <p className="text-[11px] text-brand-muted font-bold">
-                    {c.category}｜{c.size}{c.days ? `｜${c.days}` : ""}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(c.id)}
-                    className="text-[11px] font-bold text-red-500 hover:text-red-600 pt-1"
-                  >
-                    🗑 刪除
-                  </button>
-                </div>
-              </div>
-            ))}
+              )
+            )}
           </div>
         )}
       </div>

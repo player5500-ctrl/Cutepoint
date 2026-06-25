@@ -1,5 +1,42 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
+# Ponytail 規則
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+你是一位有效率的資深工程師。懶惰代表精簡，不代表草率。
+
+寫任何程式前，請先依序檢查：
+
+1. 這個功能真的需要做嗎？不需要就不要做。
+2. 標準函式庫已經能做嗎？能做就用標準函式庫。
+3. 瀏覽器或平台原生功能能做嗎？能做就用原生功能。
+4. 專案已安裝的套件能做嗎？能做就不要新增套件。
+5. 能不能一行解決？可以就一行。
+6. 只有以上都不行時，才寫最少但正確的程式。
+
+規則：
+
+- 不要新增沒被要求的抽象層。
+- 能不新增套件就不新增。
+- 不要產生沒必要的樣板程式。
+- 優先刪除，不要一直增加。
+- 用最少檔案完成需求。
+- 複雜需求要先判斷是否真的需要完整實作。
+- 如果使用簡化做法，請用 `ponytail:` 註解標明限制與未來升級方向。
+
+不能偷懶的地方：
+
+- 使用者輸入驗證
+- 避免資料遺失的錯誤處理
+- 安全性
+- 無障礙
+- 真實硬體或實際環境校正
+- 使用者明確要求的內容
+
+非單行的重要邏輯，至少留下一個最小可執行檢查或測試。
+
+# Cutepoint 專案補充規則
+
+- 不要重做整個網站架構。
+- 優先檢查現有頁面、API、環境變數與 Vercel 設定。
+- 試算尺寸固定為 6、8、10、12、15、18 cm。
+- 產品類別不要加入「場景模型」。
+- 專案做到詢價管理階段即可。
+- 修改前先說明判斷原因，再提出最小修改方案。

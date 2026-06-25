@@ -91,6 +91,120 @@ export default function ProductManager() {
     fetchProducts();
   }, []);
 
+  const handleRestoreDefaults = async () => {
+    if (!confirm("確定要恢復預設的 6 大產品類別嗎？這將會覆寫目前的產品列表（包含名稱、說明與圖片）。")) return;
+    setLoading(true);
+    setMessage("");
+    try {
+      const res = await fetch("/api/products", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": getAdminKey(),
+        },
+        body: JSON.stringify({
+          products: [
+            {
+              id: "chibi",
+              name: "Q版人像公仔",
+              desc: "把您或親友的照片，轉化為風格活潑、五官討喜的 Q 版立體公仔。最適合婚禮小物、生日賀禮、畢業紀念或個人收藏。",
+              specs: [
+                { label: "建議尺寸", value: "4cm / 8cm / 10cm / 12cm" },
+                { label: "建模需求", value: "通常需要 (由提供之 2D 照片進行 3D 建模)" },
+                { label: "製作天數", value: "約 10 - 15 個工作天" },
+                { label: "注意事項", value: "照片請儘量提供正側面、清晰且五官輪廓無遮擋之影像。" },
+              ],
+              image: "/assets/q_jiang.jpg",
+              bg: "bg-brand-peach-light",
+              tagColor: "text-brand-orange bg-brand-peach-light",
+            },
+            {
+              id: "pet",
+              name: "寵物公仔",
+              desc: "為您心愛的貓咪、狗狗或各類毛孩製作專屬的仿真或萌化公仔，讓可愛的身影永遠陪伴身旁。",
+              specs: [
+                { label: "建議尺寸", value: "4cm / 6cm / 8cm / 10cm" },
+                { label: "建模需求", value: "通常需要 (需呈現寵物獨特神韻)" },
+                { label: "製作天數", value: "約 12 - 18 個工作天" },
+                { label: "注意事項", value: "歡迎提供多角度的細節照，有助於更精準還原。" },
+              ],
+              image: "/assets/q_jiang.jpg",
+              bg: "bg-brand-yellow-light",
+              tagColor: "text-amber-600 bg-brand-yellow-light",
+            },
+            {
+              id: "ai-character",
+              name: "角色/AI圖轉公仔",
+              desc: "無論是自創的插畫人設、二次元角色，還是近期透過 Midjourney / Stable Diffusion 等 AI 生成的精美圖像，我們都能將 2D 平面視覺轉化為 3D 立體模型！",
+              specs: [
+                { label: "建議尺寸", value: "10cm / 12cm / 15cm / 18cm" },
+                { label: "建模需求", value: "需要 (從平面圖像建立完整三維骨架與面網)" },
+                { label: "製作天數", value: "約 14 - 20 個工作天" },
+                { label: "注意事項", value: "若有細部設定(如背面、配件)請一併附上，或由我們為您做延伸設計。" },
+              ],
+              image: "/assets/q_jiang.jpg",
+              bg: "bg-orange-50",
+              tagColor: "text-brand-orange bg-orange-100",
+            },
+            {
+              id: "corporate",
+              name: "企業展示樣品",
+              desc: "專為企業品牌設計！包含品牌吉祥物實體化、產品結構原型、展覽大型公仔樣品等。提供展示級模型製作服務。",
+              specs: [
+                { label: "建議尺寸", value: "15cm / 18cm 或更大客製規格" },
+                { label: "建模需求", value: "視情況 (若有原廠 3D CAD 檔則不需重新建模)" },
+                { label: "製作天數", value: "約 7 - 14 個工作天" },
+                { label: "注意事項", value: "可提供 STL 檔案進行直接處理與列印。" },
+              ],
+              image: "/assets/q_jiang.jpg",
+              bg: "bg-brand-peach-light/40",
+              tagColor: "text-pink-600 bg-pink-50",
+            },
+            {
+              id: "bulk",
+              name: "大量列印服務",
+              desc: "針對文創商品、工作室配件、學生畢業製作或桌遊棋子等，提供小批量或大批量的快速代印服務。多台設備同時運作，確保產能與速度。",
+              specs: [
+                { label: "適用尺寸", value: "4cm ~ 18cm 皆可" },
+                { label: "建模需求", value: "不需要 (客戶需自行提供 STL/OBJ 格式之 3D 檔案)" },
+                { label: "製作天數", value: "視數量而定 (3 - 10 工作天起)" },
+                { label: "注意事項", value: "請確保提供的檔案已完成閉合(Manifold)，且無破面結構。" },
+              ],
+              image: "/assets/q_jiang.jpg",
+              bg: "bg-brand-yellow-light/40",
+              tagColor: "text-yellow-700 bg-yellow-100",
+            },
+            {
+              id: "cultural-creative",
+              name: "文創模型",
+              desc: "將地方特色、品牌 IP 與文創設計轉化為立體模型！舉凡吉祥物、桌遊配件、活動限定紀念品與地方觀光商品，我們都能協助商品化，小量到批量皆可承接。",
+              specs: [
+                { label: "建議尺寸", value: "4cm ~ 18cm 皆可" },
+                { label: "建模需求", value: "視情況 (可由平面設計圖建模，或自備 3D 檔)" },
+                { label: "製作天數", value: "約 7 - 14 個工作天" },
+                { label: "注意事項", value: "歡迎學校、工作室與地方單位提案合作，批量訂單可採專案報價。" },
+              ],
+              image: "/assets/q_jiang.jpg",
+              bg: "bg-emerald-50",
+              tagColor: "text-emerald-600 bg-emerald-100",
+            },
+          ],
+        }),
+      });
+      if (res.ok) {
+        setMessage("✅ 已恢復為預設的 6 大產品類別！前台產品頁已同步");
+        fetchProducts();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setMessage(`恢復失敗：${data.error || res.status}`);
+      }
+    } catch {
+      setMessage("恢復失敗，請稍後再試");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const openAdd = () => {
     setEditingId(null);
     setForm({ ...emptyForm, specs: emptyForm.specs.map((s) => ({ ...s })) });
@@ -230,7 +344,14 @@ export default function ProductManager() {
             這裡的項目會完整呈現在前台「產品與服務類別」頁面，可新增、編輯、刪除與調整順序
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={handleRestoreDefaults}
+            className="text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-250 px-4 py-2 rounded-full border border-gray-300 transition-all whitespace-nowrap"
+          >
+            🔄 恢復預設項目
+          </button>
           <a
             href="/products"
             target="_blank"

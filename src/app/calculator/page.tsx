@@ -8,6 +8,7 @@ import QChan from "@/components/QChan";
 // ====== 企劃書 V7 定價資料 ======
 // 表9：尺寸建議售價（已含照片轉 Q 版基本建模）
 const sizePricing: Record<string, { low: number; high: number; tag: string }> = {
+  "4cm": { low: 590, high: 790, tag: "超迷你款" },
   "6cm": { low: 890, high: 1190, tag: "入門引流款" },
   "8cm": { low: 1490, high: 1990, tag: "基本款・主推" },
   "10cm": { low: 2390, high: 2990, tag: "主力款" },
@@ -16,9 +17,9 @@ const sizePricing: Record<string, { low: number; high: number; tag: string }> = 
   "18cm": { low: 6990, high: 8800, tag: "旗艦款" },
 };
 
-// 尺寸級距：0=小(6-8cm) 1=中(10-12cm) 2=大(15-18cm)
+// 尺寸級距：0=小(4-8cm) 1=中(10-12cm) 2=大(15-18cm)
 const sizeTier = (size: string) =>
-  size === "6cm" || size === "8cm" ? 0 : size === "10cm" || size === "12cm" ? 1 : 2;
+  size === "4cm" || size === "6cm" || size === "8cm" ? 0 : size === "10cm" || size === "12cm" ? 1 : 2;
 
 // 表11：加價項目（依尺寸級距）
 const glassFees = [250, 400, 600]; // 玻璃罩
@@ -37,10 +38,10 @@ const productTypes = [
   { name: "角色/AI圖轉公仔", factor: 1.0, defaultOwnFile: false },
   { name: "企業展示樣品", factor: 1.2, defaultOwnFile: false }, // 企業禮品組 NT$5,000 起
   { name: "大量列印服務", factor: 1.0, defaultOwnFile: true }, // 自備檔代印
-  { name: "文創模型", factor: 1.0, defaultOwnFile: false }, // 地方文創、IP 商品化、桌遊配件
+  { name: "文創模型", factor: 1.0, defaultOwnFile: false },
 ];
 
-const sizes = ["6cm", "8cm", "10cm", "12cm", "15cm", "18cm"];
+const sizes = ["4cm", "6cm", "8cm", "10cm", "12cm", "15cm", "18cm"];
 const quantities = ["1 件", "2–5 件", "6–20 件", "20 件以上"];
 const complexities = [
   { label: "簡單", desc: "少數細節、平滑面多" },

@@ -53,6 +53,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/printing-notes" className="text-sm text-brand-muted hover:text-brand-orange transition-colors">
+                  印製須知
+                </Link>
+              </li>
+              <li>
                 <Link href="/process" className="text-sm text-brand-muted hover:text-brand-orange transition-colors">
                   製作流程
                 </Link>
@@ -68,21 +73,30 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm text-brand-muted">
               <li className="flex items-center gap-2">
                 <span className="text-brand-orange">LINE ID:</span>
-                <span className="hover:text-brand-orange cursor-pointer">@cutepoint3d</span>
+                <a
+                  href="https://line.me/ti/p/_GL-WZNcN_"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-brand-orange transition-colors break-all"
+                >
+                  https://line.me/ti/p/_GL-WZNcN_
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-brand-orange">電話:</span>
-                <span>02-2345-6789</span>
+                <a href="tel:0938017081" className="hover:text-brand-orange transition-colors">
+                  0938017081
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-brand-orange">Email:</span>
-                <a href="mailto:service@cutepoint3d.com" className="hover:text-brand-orange transition-colors">
-                  service@cutepoint3d.com
+                <a href="mailto:yumancheng123@gmail.com" className="hover:text-brand-orange transition-colors">
+                  yumancheng123@gmail.com
                 </a>
               </li>
               <li className="flex items-start gap-1">
                 <span className="text-brand-orange flex-shrink-0">地址:</span>
-                <span className="leading-snug">台北市信義區信義路五段 7 號 88 樓 (101大樓)</span>
+                <span className="leading-snug">新北市土城區中央路四段51號</span>
               </li>
             </ul>
           </div>

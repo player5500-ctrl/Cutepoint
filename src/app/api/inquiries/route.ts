@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/adminAuth";
 import fs from "fs";
+import nodemailer from "nodemailer";
 import path from "path";
 
 const filePath = path.join(process.cwd(), "src/data/inquiries.json");
+const inquiryNotificationEmail = "sophia_chen@microjet.com.tw";
 
 // In-memory cache fallback for Vercel/serverless environments where fs is read-only
 let memoryInquiries: any[] = [];
@@ -38,6 +40,82 @@ function saveInquiries(inquiries: any[]) {
     console.error("Failed to write to inquiries file, saved in memory only", error);
     return false;
   }
+}
+
+function formatCurrency(amount: number) {
+  if (!amount) return "未試算";
+  return `NT$${amount.toLocaleString("zh-TW")}`;
+}
+
+function buildInquiryEmail(newInquiry: any) {
+  const priceRange = newInquiry.estLow || newInquiry.estHigh
+    ? `${formatCurrency(newInquiry.estLow)} ~ ${formatCurrency(newInquiry.estHigh)}`
+    : "未試算";
+
+  const lines = [
+    `詢價ID：${newInquiry.id}`,
+    `建立時間：${new Date(newInquiry.createdAt).toLocaleString("zh-TW", { hour12: false })}`,
+    "",
+    "客戶聯絡資料",
+    `姓名：${newInquiry.clientName}`,
+    `LINE ID：${newInquiry.lineId || "未填寫"}`,
+    `電話：${newInquiry.phone || "未填寫"}`,
+    `Email：${newInquiry.email || "未填寫"}`,
+    "",
+    "詢價內容",
+    `產品類型：${newInquiry.productType}`,
+    `尺寸：${newInquiry.size}`,
+    `數量：${newInquiry.quantity}`,
+    `建模需求：${newInquiry.needModeling ? "是" : "否"}`,
+    `修圖需求：${newInquiry.needRetouching ? "是" : "否"}`,
+    `複雜度：${newInquiry.complexity}`,
+    `急件：${newInquiry.isUrgent ? "是" : "否"}`,
+    `包裝：${newInquiry.needPackaging ? "是" : "否"}`,
+    `玻璃罩：${newInquiry.needGlassCase ? "是" : "否"}`,
+    `名牌底座：${newInquiry.needNameBase ? "是" : "否"}`,
+    `預估價格：${priceRange}`,
+    `用途：${newInquiry.purpose || "未填寫"}`,
+    `期望交期：${newInquiry.expectedDelivery || "未填寫"}`,
+    `上傳檔案：${newInquiry.fileNames.length ? newInquiry.fileNames.join(", ") : "無"}`,
+    `備註：${newInquiry.internalNotes || "未填寫"}`,
+  ];
+
+  return {
+    subject: `萌點3D 新詢價單 ${newInquiry.id} - ${newInquiry.clientName}`,
+    text: lines.join("\n"),
+    html: lines
+      .map((line) => line ? `<p>${line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>` : "<br />")
+      .join(""),
+  };
+}
+
+async function sendInquiryEmailNotification(newInquiry: any) {
+  const smtpUser = process.env.GMAIL_SMTP_USER;
+  const smtpPassword = process.env.GMAIL_APP_PASSWORD;
+  if (!smtpUser || !smtpPassword) {
+    throw new Error("Missing GMAIL_SMTP_USER or GMAIL_APP_PASSWORD environment variable");
+  }
+
+  const from = process.env.GMAIL_FROM_EMAIL || `萌點3D <${smtpUser}>`;
+  const email = buildInquiryEmail(newInquiry);
+
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: smtpUser,
+      pass: smtpPassword,
+    },
+  });
+
+  await transporter.sendMail({
+    from,
+    to: inquiryNotificationEmail,
+    subject: email.subject,
+    text: email.text,
+    html: email.html,
+  });
 }
 
 // GET: Retrieve all inquiries（需後台密碼）
@@ -92,6 +170,8 @@ export async function POST(request: Request) {
       complexity: body.complexity || "一般",
       isUrgent: body.isUrgent === true,
       needPackaging: body.needPackaging === true,
+      needGlassCase: body.needGlassCase === true,
+      needNameBase: body.needNameBase === true,
       estLow,
       estHigh,
       purpose: body.purpose || "",
@@ -103,6 +183,16 @@ export async function POST(request: Request) {
       officialQuote: 0,
       internalNotes: body.notes || "",
     };
+
+    try {
+      await sendInquiryEmailNotification(newInquiry);
+    } catch (error) {
+      console.error("Error sending inquiry email notification", error);
+      return NextResponse.json(
+        { error: "詢價通知寄送失敗，請確認寄信服務設定後再重試。" },
+        { status: 500 },
+      );
+    }
 
     inquiries.unshift(newInquiry); // Add to the beginning
     saveInquiries(inquiries);
@@ -131,6 +221,8 @@ export async function POST(request: Request) {
             complexity: newInquiry.complexity,
             isUrgent: newInquiry.isUrgent ? "是" : "否",
             needPackaging: newInquiry.needPackaging ? "是" : "否",
+            needGlassCase: newInquiry.needGlassCase ? "是" : "否",
+            needNameBase: newInquiry.needNameBase ? "是" : "否",
             estLow: newInquiry.estLow,
             estHigh: newInquiry.estHigh,
             purpose: newInquiry.purpose,

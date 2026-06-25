@@ -40,7 +40,7 @@ export default function ContactPage() {
         <div className="max-w-3xl mx-auto">
           <QChan
             image="/assets/qchan/q_wave.gif"
-            text={`如果你有任何不懂的，除了直接在右邊留言之外，Q醬 推薦你直接加我們的官方 LINE ID【@cutepoint3d】喔🐾！我們會有專門的印製師傅在線即時回答你的問題，發照片核對檔案也更方便呢！`}
+            text={`有任何製作疑問，都可以在右側留言，或直接加入官方 LINE 諮詢喔🐾！我們的 3D處理人員會協助確認照片、檔案與製作細節，讓溝通更清楚也更安心。`}
             position="left"
           />
         </div>
@@ -60,7 +60,14 @@ export default function ContactPage() {
                   <span className="text-brand-orange text-lg">💬</span>
                   <div className="space-y-0.5">
                     <p className="text-brand-dark font-bold">官方 LINE</p>
-                    <p>ID: @cutepoint3d</p>
+                    <a
+                      href="https://line.me/ti/p/_GL-WZNcN_"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-brand-orange transition-colors break-all"
+                    >
+                      https://line.me/ti/p/_GL-WZNcN_
+                    </a>
                     <p className="text-[11px] text-brand-orange">（加入後傳送貼圖即可啟動一對一客服諮詢）</p>
                   </div>
                 </li>
@@ -68,15 +75,17 @@ export default function ContactPage() {
                   <span className="text-brand-orange text-lg">📞</span>
                   <div className="space-y-0.5">
                     <p className="text-brand-dark font-bold">客服電話</p>
-                    <p>02-2345-6789</p>
+                    <a href="tel:0938017081" className="hover:text-brand-orange transition-colors">
+                      0938017081
+                    </a>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-brand-orange text-lg">✉</span>
                   <div className="space-y-0.5">
                     <p className="text-brand-dark font-bold">聯絡信箱</p>
-                    <a href="mailto:service@cutepoint3d.com" className="hover:text-brand-orange transition-colors">
-                      service@cutepoint3d.com
+                    <a href="mailto:yumancheng123@gmail.com" className="hover:text-brand-orange transition-colors">
+                      yumancheng123@gmail.com
                     </a>
                   </div>
                 </li>
@@ -84,7 +93,7 @@ export default function ContactPage() {
                   <span className="text-brand-orange text-lg">📍</span>
                   <div className="space-y-0.5">
                     <p className="text-brand-dark font-bold">工作室地址</p>
-                    <p>台北市信義區信義路五段 7 號 88 樓 (101大樓)</p>
+                    <p>新北市土城區中央路四段51號</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -191,23 +200,23 @@ export default function ContactPage() {
               {/* Roads grid and markers */}
               <div className="w-full h-full relative opacity-85 select-none">
                 <div className="absolute top-1/2 left-0 right-0 h-8 bg-white/95 border-y border-gray-300 transform -translate-y-1/2 flex items-center justify-center font-bold text-gray-500 text-xs tracking-widest">
-                  信義路五段 (Xinyi Road Sec. 5)
+                  中央路四段 (Zhongyang Road Sec. 4)
                 </div>
                 <div className="absolute left-1/3 top-0 bottom-0 w-8 bg-white/95 border-x border-gray-300 flex items-center justify-center font-bold text-gray-500 text-xs tracking-widest [writing-mode:vertical-lr]">
-                  市府路 (Shifu Road)
+                  交通幹道
                 </div>
                 
-                {/* 101 block building */}
+                {/* Studio location marker */}
                 <div className="absolute top-[10%] left-[45%] bg-amber-50 border-2 border-brand-orange/60 rounded-2xl p-4 shadow-lg text-center z-10 animate-float flex flex-col items-center">
                   <span className="text-2xl">🏢</span>
-                  <p className="text-xs font-black text-brand-dark mt-1">台北 101 大樓</p>
-                  <p className="text-[10px] text-brand-orange font-bold">萌點3D 工作室 (88F)</p>
+                  <p className="text-xs font-black text-brand-dark mt-1">萌點3D 工作室</p>
+                  <p className="text-[10px] text-brand-orange font-bold">新北市土城區中央路四段51號</p>
                 </div>
                 
                 <div className="absolute bottom-[10%] left-[10%] bg-white border border-gray-300 rounded-xl p-2.5 text-center text-xs">
                   <span className="text-base block">🚇</span>
-                  <p className="font-extrabold text-gray-600">捷運 台北101/世貿站</p>
-                  <p className="text-[10px] text-gray-400">4號出口 步行1分鐘</p>
+                  <p className="font-extrabold text-gray-600">新北土城服務據點</p>
+                  <p className="text-[10px] text-gray-400">請先透過 LINE 預約到訪時間</p>
                 </div>
               </div>
             </div>

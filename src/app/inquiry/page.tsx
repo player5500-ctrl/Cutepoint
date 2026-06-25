@@ -13,7 +13,7 @@ const productTypes = [
   "文創模型",
 ];
 
-const sizes = ["6cm", "8cm", "10cm", "12cm", "15cm", "18cm"];
+const sizes = ["4cm", "6cm", "8cm", "10cm", "12cm", "15cm", "18cm"];
 const quantities = ["1 件", "2–5 件", "6–20 件", "20 件以上"];
 const complexities = ["簡單", "一般", "複雜"];
 
@@ -36,6 +36,8 @@ function InquiryFormContent() {
   const [complexity, setComplexity] = useState("一般");
   const [isUrgent, setIsUrgent] = useState(false);
   const [needPackaging, setNeedPackaging] = useState(false);
+  const [needGlassCase, setNeedGlassCase] = useState(false);
+  const [needNameBase, setNeedNameBase] = useState(false);
   
   const [estPriceRange, setEstPriceRange] = useState("");
   const [purpose, setPurpose] = useState("");
@@ -74,6 +76,12 @@ function InquiryFormContent() {
     const pkgFromQuery = searchParams.get("pkg");
     if (pkgFromQuery) setNeedPackaging(pkgFromQuery === "true");
 
+    const glassFromQuery = searchParams.get("glass");
+    if (glassFromQuery) setNeedGlassCase(glassFromQuery === "true");
+
+    const baseFromQuery = searchParams.get("base");
+    if (baseFromQuery) setNeedNameBase(baseFromQuery === "true");
+
     const lowFromQuery = searchParams.get("low");
     const highFromQuery = searchParams.get("high");
     if (lowFromQuery && highFromQuery) {
@@ -82,6 +90,19 @@ function InquiryFormContent() {
       setEstPriceRange("尚未試算，直接填寫");
     }
   }, [searchParams]);
+
+  const priceBasisItems = [
+    `產品：${productType}`,
+    `尺寸：${size}`,
+    `數量：${quantity}`,
+    `複雜度：${complexity}`,
+    needModeling ? "含基本 3D 建模" : "自備 3D 檔",
+    needRetouching ? "需要 3D 修圖" : "",
+    isUrgent ? "急件加速" : "",
+    needGlassCase ? "加購玻璃罩" : "",
+    needNameBase ? "加購名牌底座" : "",
+    needPackaging ? "加購包裝" : "",
+  ].filter(Boolean);
 
   // File selection handlers
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,6 +190,8 @@ function InquiryFormContent() {
           complexity,
           isUrgent,
           needPackaging,
+          needGlassCase,
+          needNameBase,
           estPriceRange,
           purpose,
           expectedDelivery,
@@ -177,11 +200,10 @@ function InquiryFormContent() {
         }),
       });
 
+      const result = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error("送出失敗，請重試或聯絡客服");
+        throw new Error(result.error || "送出失敗，請重試或聯絡客服");
       }
-
-      const result = await response.json();
       
       // Navigate to Success Page
       router.push(`/success?id=${result.id}&name=${encodeURIComponent(name)}`);
@@ -375,6 +397,22 @@ function InquiryFormContent() {
                 value={estPriceRange}
                 className="w-full px-4 py-2.5 rounded-xl border border-brand-border/60 bg-gray-50 text-gray-500 cursor-not-allowed outline-none text-sm font-bold"
               />
+              <div className="rounded-xl border border-brand-border/50 bg-brand-cream/35 px-3 py-2.5">
+                <p className="text-[11px] font-bold text-brand-dark mb-2">價格依據</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {priceBasisItems.map((item) => (
+                    <span
+                      key={item}
+                      className="px-2 py-1 rounded-full bg-white text-[11px] font-semibold text-brand-muted border border-brand-border/50"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+                <p className="mt-2 text-[11px] leading-relaxed text-brand-muted">
+                  實際報價會依照片、檔案與製作細節確認後微調。
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -552,7 +590,7 @@ export default function InquiryPage() {
         <div className="max-w-3xl mx-auto mb-12">
           <QChan
             image="/assets/qchan/q_fill.gif"
-            text="哇！看到你的估價需求囉，Q醬 已經幫你把所有的尺寸、數量還有是否有建模選項都自動帶過來了！你只需要填寫姓名跟 LINE 或是 Email，再上傳你的參考照片，Q醬 就能收件幫你給師傅排程囉 🐾！如果有其它特殊想法，也可以寫在底下的備註欄喔！"
+            text="哇！估價需求已經帶過來囉。你只要補上姓名、LINE 或 Email，再上傳參考照片或檔案，Q醬 就會協助交給 3D處理人員評估排程🐾！若有姿勢、表情、包裝或用途上的想法，也可以寫在備註欄。"
             position="left"
           />
         </div>

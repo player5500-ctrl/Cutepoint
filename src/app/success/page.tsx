@@ -55,7 +55,7 @@ function SuccessPageContent() {
       <div className="text-left">
         <QChan
           image="/assets/qchan/q_thanks.gif"
-          text={`收到你的委託單囉！真的非常感謝你～💕\n這張詢價單的序號是【${inquiryId}】，Q醬 已經端端正正地雙手遞交給我們的專業 3D 雕塑團隊與印製師傅囉！\n\n我們會在 24 小時內仔細評估你上傳的檔案與需求複雜度，並透過你留下的聯絡方式回覆正式報價單與後續製作合約，請耐心等候我們唷🐾！`}
+          text={`收到你的委託單囉，謝謝你的信任💕\n這張詢價單的序號是【${inquiryId}】，Q醬 已經交給專業團隊與 3D處理人員進行評估。\n\n我們會在 24 小時內檢查你上傳的檔案、尺寸與需求複雜度，並透過你留下的聯絡方式回覆正式報價單與後續製作流程，請耐心等候我們唷🐾！`}
           position="left"
         />
       </div>
@@ -65,18 +65,18 @@ function SuccessPageContent() {
         <h3 className="text-xs font-black tracking-widest text-brand-orange uppercase">
           後續製作流程簡介
         </h3>
-        <div className="grid grid-cols-3 gap-2 text-left">
-          <div className="p-3 bg-brand-cream/20 rounded-xl border border-brand-border/25">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
+          <div className="p-4 bg-brand-cream/20 rounded-xl border border-brand-border/25">
             <span className="text-lg block mb-1">1</span>
             <p className="text-xs font-bold text-brand-dark">需求核對</p>
             <p className="text-[10px] text-brand-muted mt-0.5 font-medium leading-relaxed">確認模型檔案/上色規格與交期</p>
           </div>
-          <div className="p-3 bg-brand-cream/20 rounded-xl border border-brand-border/25">
+          <div className="p-4 bg-brand-cream/20 rounded-xl border border-brand-border/25">
             <span className="text-lg block mb-1">2</span>
-            <p className="text-xs font-bold text-brand-dark">師傅建模</p>
-            <p className="text-[10px] text-brand-muted mt-0.5 font-medium leading-relaxed">建立 3D 骨架與客戶確認細節</p>
+            <p className="text-xs font-bold text-brand-dark">3D處理人員建模</p>
+            <p className="text-[10px] text-brand-muted mt-0.5 font-medium leading-relaxed">建立 3D 結構並確認細節</p>
           </div>
-          <div className="p-3 bg-brand-cream/20 rounded-xl border border-brand-border/25">
+          <div className="p-4 bg-brand-cream/20 rounded-xl border border-brand-border/25">
             <span className="text-lg block mb-1">3</span>
             <p className="text-xs font-bold text-brand-dark">列印上色</p>
             <p className="text-[10px] text-brand-muted mt-0.5 font-medium leading-relaxed">專業打磨上色與防護包裝寄送</p>

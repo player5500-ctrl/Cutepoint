@@ -35,7 +35,7 @@ export const DEFAULT_PRODUCTS: ProductItem[] = [
     name: "Q版人像公仔",
     desc: "把您或親友的照片，轉化為風格活潑、五官討喜的 Q 版立體公仔。最適合婚禮小物、生日賀禮、畢業紀念或個人收藏。",
     specs: [
-      { label: "建議尺寸", value: "8cm / 10cm / 12cm" },
+      { label: "建議尺寸", value: "4cm / 8cm / 10cm / 12cm" },
       { label: "建模需求", value: "通常需要 (由提供之 2D 照片進行 3D 建模)" },
       { label: "製作天數", value: "約 10 - 15 個工作天" },
       { label: "注意事項", value: "照片請儘量提供正側面、清晰且五官輪廓無遮擋之影像。" },
@@ -49,7 +49,7 @@ export const DEFAULT_PRODUCTS: ProductItem[] = [
     name: "寵物公仔",
     desc: "為您心愛的貓咪、狗狗或各類毛孩製作專屬的仿真或萌化公仔，讓可愛的身影永遠陪伴身旁。",
     specs: [
-      { label: "建議尺寸", value: "6cm / 8cm / 10cm" },
+      { label: "建議尺寸", value: "4cm / 6cm / 8cm / 10cm" },
       { label: "建模需求", value: "通常需要 (需呈現寵物獨特神韻)" },
       { label: "製作天數", value: "約 12 - 18 個工作天" },
       { label: "注意事項", value: "歡迎提供多角度的細節照，有助於更精準還原。" },
@@ -91,7 +91,7 @@ export const DEFAULT_PRODUCTS: ProductItem[] = [
     name: "大量列印服務",
     desc: "針對文創商品、工作室配件、學生畢業製作或桌遊棋子等，提供小批量或大批量的快速代印服務。多台設備同時運作，確保產能與速度。",
     specs: [
-      { label: "適用尺寸", value: "6cm ~ 18cm 皆可" },
+      { label: "適用尺寸", value: "4cm ~ 18cm 皆可" },
       { label: "建模需求", value: "不需要 (客戶需自行提供 STL/OBJ 格式之 3D 檔案)" },
       { label: "製作天數", value: "視數量而定 (3 - 10 工作天起)" },
       { label: "注意事項", value: "請確保提供的檔案已完成閉合(Manifold)，且無破面結構。" },
@@ -105,7 +105,7 @@ export const DEFAULT_PRODUCTS: ProductItem[] = [
     name: "文創模型",
     desc: "將地方特色、品牌 IP 與文創設計轉化為立體模型！舉凡吉祥物、桌遊配件、活動限定紀念品與地方觀光商品，我們都能協助商品化，小量到批量皆可承接。",
     specs: [
-      { label: "建議尺寸", value: "6cm ~ 18cm 皆可" },
+      { label: "建議尺寸", value: "4cm ~ 18cm 皆可" },
       { label: "建模需求", value: "視情況 (可由平面設計圖建模，或自備 3D 檔)" },
       { label: "製作天數", value: "約 7 - 14 個工作天" },
       { label: "注意事項", value: "歡迎學校、工作室與地方單位提案合作，批量訂單可採專案報價。" },
@@ -115,6 +115,21 @@ export const DEFAULT_PRODUCTS: ProductItem[] = [
     image: "/assets/q_jiang.jpg",
   },
 ];
+
+const Q_VERSION_PERSON_PRODUCT: ProductItem = {
+  id: "q-version-person",
+  name: "Q版人物",
+  desc: "將照片中的人物轉化為專屬 Q版公仔，保留表情、髮型、服裝與代表性細節，製作成可收藏的立體紀念。",
+  specs: [
+    { label: "建議尺寸", value: "6cm / 8cm / 10cm" },
+    { label: "建模需求", value: "通常需要（依照片建立 Q版立體模型）" },
+    { label: "製作天數", value: "約 12 - 18 個工作天" },
+    { label: "注意事項", value: "建議提供正面清晰照片與喜愛的姿勢參考。" },
+  ],
+  image: "/assets/q-version-person-figure.jpg",
+  bg: "bg-brand-peach-light",
+  tagColor: "text-brand-orange bg-brand-peach-light",
+};
 
 // 讀取已儲存的產品；若尚未有任何資料則回傳內建 6 項預設
 export async function readProducts(): Promise<ProductItem[]> {
@@ -148,7 +163,28 @@ export async function readProducts(): Promise<ProductItem[]> {
 
   // 空陣列或讀不到 → 回傳預設種子，確保前台永遠有內容
   if (!Array.isArray(stored) || stored.length === 0) return DEFAULT_PRODUCTS;
-  return stored;
+
+  // 規格欄位格式自動相容與規格化（處理舊格式例如 {"建議尺寸": "..."} 轉為 {"label": "建議尺寸", "value": "..."}）
+  const normalized = stored.map((product) => {
+    const specs = Array.isArray(product.specs)
+      ? product.specs.map((spec: any) => {
+          if (spec && typeof spec === "object") {
+            if (spec.label !== undefined && spec.value !== undefined) {
+              return spec;
+            }
+            const otherKeys = Object.keys(spec).filter((k) => k !== "label" && k !== "value");
+            if (otherKeys.length > 0) {
+              const label = otherKeys[0];
+              return { label, value: String(spec[label] || "") };
+            }
+          }
+          return { label: "", value: "" };
+        })
+      : [];
+    return { ...product, specs };
+  });
+
+  return normalized;
 }
 
 export async function saveProducts(products: ProductItem[]) {
@@ -190,7 +226,10 @@ export async function persistImage(imageData: string, id: string): Promise<strin
 // GET：取得所有產品（公開，前台產品頁使用）
 export async function GET() {
   const products = await readProducts();
-  return NextResponse.json(products);
+  const list = products.some((product) => product.id === Q_VERSION_PERSON_PRODUCT.id)
+    ? products
+    : [Q_VERSION_PERSON_PRODUCT, ...products];
+  return NextResponse.json(list);
 }
 
 // POST：新增單一產品（需後台密碼）

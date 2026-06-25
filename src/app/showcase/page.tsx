@@ -15,19 +15,99 @@ const categories = [
   "文創模型",
 ];
 
-const caseStudies: {
-  id: number;
+// 作品案例文案超過此字數即收合，顯示「顯示更多」按鈕
+const DESC_LIMIT = 45;
+
+type CaseStudy = {
+  id: number | string;
   title: string;
   category: string;
   desc: string;
   size: string;
   days: string;
   img: string;
-}[] = [];
+};
+
+const caseStudies: CaseStudy[] = [];
+
+// 單張作品卡：圖片滿版灰底、完整顯示整尊(object-contain)，文案過長收合並提供「顯示更多」
+function CaseCard({ item }: { item: CaseStudy }) {
+  const [expanded, setExpanded] = useState(false);
+  const desc = item.desc || "";
+  const isLong = desc.length > DESC_LIMIT;
+  const shownDesc = !isLong || expanded ? desc : desc.slice(0, DESC_LIMIT) + "…";
+
+  return (
+    <div className="bg-white rounded-3xl border border-brand-border/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+      {/* Visual：滿版灰底，完整顯示整尊（object-contain 不裁切） */}
+      <div className="relative w-full h-64 bg-[#f1f2f4] border-b border-brand-border/40 flex items-center justify-center p-3">
+        <Image
+          src={item.img}
+          alt={item.title}
+          fill
+          sizes="(max-width:768px) 100vw, 360px"
+          className="object-contain p-2"
+        />
+        <div className="absolute top-4 left-4 bg-white/95 px-3 py-1 rounded-full border border-brand-border/60 shadow-sm">
+          <span className="text-[10px] font-extrabold text-brand-orange tracking-wider uppercase">
+            {item.category}
+          </span>
+        </div>
+      </div>
+
+      {/* Info Text */}
+      <div className="p-6 flex-grow flex flex-col justify-between space-y-4">
+        <div className="space-y-2">
+          <h3 className="text-lg font-black text-brand-dark hover:text-brand-orange transition-colors">
+            {item.title}
+          </h3>
+          {desc && (
+            <div className="space-y-1">
+              <p className="text-xs text-brand-muted leading-relaxed font-semibold whitespace-pre-line">
+                {shownDesc}
+              </p>
+              {isLong && (
+                <button
+                  type="button"
+                  onClick={() => setExpanded((v) => !v)}
+                  className="text-[11px] font-bold text-brand-orange hover:text-brand-orange-hover"
+                >
+                  {expanded ? "收合 ▲" : "顯示更多 ▼"}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Meta data row */}
+        <div className="flex justify-between items-center text-[11px] font-bold text-brand-muted pt-4 border-t border-brand-border/40">
+          <div className="flex gap-1.5 items-center">
+            <span className="text-brand-orange">📏</span>
+            <span>尺寸：{item.size}</span>
+          </div>
+          <div className="flex gap-1.5 items-center">
+            <span className="text-brand-orange">⏱</span>
+            <span>耗時：{item.days}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick CTA inside card */}
+      <div className="px-6 pb-6 pt-2">
+        <Link
+          href={`/calculator?type=${encodeURIComponent(item.category)}`}
+          className="block w-full text-center py-2.5 rounded-full text-xs font-extrabold text-brand-orange border border-brand-orange hover:bg-brand-peach-light/40 transition-colors"
+        >
+          試算類似項目 ➔
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 export default function ShowcasePage() {
   const [activeCategory, setActiveCategory] = useState("全部案例");
-  const [dynamicCases, setDynamicCases] = useState<typeof caseStudies>([]);
+  const [dynamicCases, setDynamicCases] = useState<CaseStudy[]>([]);
 
   // 讀取後台 /studio 新增的作品案例
   useEffect(() => {
@@ -94,61 +174,7 @@ export default function ShowcasePage() {
         {filteredCases.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredCases.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-3xl border border-brand-border/60 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
-              >
-                {/* Visual */}
-                <div className="relative w-full h-56 bg-brand-cream/30 border-b border-brand-border/40 flex items-center justify-center p-4">
-                  <div className="relative w-44 h-44 rounded-2xl overflow-hidden shadow-inner border border-brand-border bg-white">
-                    <Image
-                      src={item.img}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="absolute top-4 left-4 bg-white/95 px-3 py-1 rounded-full border border-brand-border/60 shadow-sm">
-                    <span className="text-[10px] font-extrabold text-brand-orange tracking-wider uppercase">
-                      {item.category}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Info Text */}
-                <div className="p-6 flex-grow flex flex-col justify-between space-y-4">
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-black text-brand-dark hover:text-brand-orange transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs text-brand-muted leading-relaxed font-semibold">
-                      {item.desc}
-                    </p>
-                  </div>
-
-                  {/* Meta data row */}
-                  <div className="flex justify-between items-center text-[11px] font-bold text-brand-muted pt-4 border-t border-brand-border/40">
-                    <div className="flex gap-1.5 items-center">
-                      <span className="text-brand-orange">📏</span>
-                      <span>尺寸：{item.size}</span>
-                    </div>
-                    <div className="flex gap-1.5 items-center">
-                      <span className="text-brand-orange">⏱</span>
-                      <span>耗時：{item.days}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick CTA inside card */}
-                <div className="px-6 pb-6 pt-2">
-                  <Link
-                    href={`/calculator?type=${encodeURIComponent(item.category)}`}
-                    className="block w-full text-center py-2.5 rounded-full text-xs font-extrabold text-brand-orange border border-brand-orange hover:bg-brand-peach-light/40 transition-colors"
-                  >
-                    試算類似項目 ➔
-                  </Link>
-                </div>
-              </div>
+              <CaseCard key={item.id} item={item} />
             ))}
           </div>
         ) : (
