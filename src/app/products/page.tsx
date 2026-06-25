@@ -44,12 +44,6 @@ export default function ProductsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // 暫時只顯示這些產品（避免重疊／清掉其他類別）；要顯示全部就把陣列清空 []
-  const ONLY_SHOW_NAMES = ["Q版人物", "Q版人像公仔"];
-  const visibleProducts = ONLY_SHOW_NAMES.length
-    ? products.filter((p) => ONLY_SHOW_NAMES.some((n) => (p.name || "").includes(n)))
-    : products;
-
   return (
     <div className="w-full py-12 md:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,13 +74,13 @@ export default function ProductsPage() {
           <div className="py-20 flex justify-center">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-brand-orange" />
           </div>
-        ) : visibleProducts.length === 0 ? (
+        ) : products.length === 0 ? (
           <div className="text-center py-20 text-sm text-brand-muted font-medium">
             目前尚未上架產品項目，請稍後再回來看看 🐾
           </div>
         ) : (
           <div className="space-y-12">
-            {visibleProducts.map((product, idx) => {
+            {products.map((product, idx) => {
               const colors = palette[idx % palette.length];
               const bg = product.bg || colors.bg;
               const tagColor = product.tagColor || colors.tagColor;
