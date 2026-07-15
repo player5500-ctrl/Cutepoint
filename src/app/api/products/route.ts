@@ -126,7 +126,7 @@ const Q_VERSION_PERSON_PRODUCT: ProductItem = {
     { label: "製作天數", value: "約 12 - 18 個工作天" },
     { label: "注意事項", value: "建議提供正面清晰照片與喜愛的姿勢參考。" },
   ],
-  image: "/assets/q-version-person-figure.jpg",
+  image: "/assets/q-version-person-figure-cropped.jpg",
   bg: "bg-brand-peach-light",
   tagColor: "text-brand-orange bg-brand-peach-light",
 };
@@ -167,15 +167,19 @@ export async function readProducts(): Promise<ProductItem[]> {
   // 規格欄位格式自動相容與規格化（處理舊格式例如 {"建議尺寸": "..."} 轉為 {"label": "建議尺寸", "value": "..."}）
   const normalized = stored.map((product) => {
     const specs = Array.isArray(product.specs)
-      ? product.specs.map((spec: any) => {
+      ? (product.specs as unknown[]).map((spec) => {
           if (spec && typeof spec === "object") {
-            if (spec.label !== undefined && spec.value !== undefined) {
-              return spec;
+            const specRecord = spec as Record<string, unknown>;
+            if (specRecord.label !== undefined && specRecord.value !== undefined) {
+              return {
+                label: String(specRecord.label || ""),
+                value: String(specRecord.value || ""),
+              };
             }
-            const otherKeys = Object.keys(spec).filter((k) => k !== "label" && k !== "value");
+            const otherKeys = Object.keys(specRecord).filter((k) => k !== "label" && k !== "value");
             if (otherKeys.length > 0) {
               const label = otherKeys[0];
-              return { label, value: String(spec[label] || "") };
+              return { label, value: String(specRecord[label] || "") };
             }
           }
           return { label: "", value: "" };

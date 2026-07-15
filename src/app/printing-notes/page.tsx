@@ -1,5 +1,6 @@
 import Link from "next/link";
 import QChan from "@/components/QChan";
+import { CopyrightConsent } from "@/components/CopyrightConsent";
 
 const noteSections = [
   {
@@ -51,7 +52,7 @@ const noteSections = [
 ];
 
 const orderNotes = [
-  "客戶需自行確認提供圖片之著作權與使用權。",
+  "委製方需合法取得授權圖片之著作權與使用權。",
   "製作時將優先保留最具代表性的3~5項特色。",
   "大幅修改風格、比例或新增文字內容，可能需另行報價。",
   "成品相似度約可達原照片8~9成，將依照片品質而有所差異。",
@@ -134,6 +135,8 @@ export default function PrintingNotesPage() {
             ))}
           </ol>
         </div>
+
+        <CopyrightConsent />
 
         <div className="mt-12 flex flex-col sm:flex-row gap-3 justify-center">
           <Link

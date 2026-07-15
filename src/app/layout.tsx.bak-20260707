@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 export const metadata: Metadata = {
   title: "萌點3D | 3D 公仔客製化與大量列印服務 (Q醬為您導覽)",
@@ -26,7 +25,6 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
-        <GoogleAnalytics />
       </body>
     </html>
   );

@@ -5,30 +5,59 @@ import nodemailer from "nodemailer";
 import path from "path";
 
 const filePath = path.join(process.cwd(), "src/data/inquiries.json");
+const INQUIRIES_BLOB = "inquiries.json";
 const inquiryNotificationEmail = "sophia_chen@microjet.com.tw";
 
-// In-memory cache fallback for Vercel/serverless environments where fs is read-only
+// 是否已設定 Vercel Blob（線上永久儲存）；未設定則用本機檔案 + 記憶體備援
+const hasBlob = () => !!process.env.BLOB_READ_WRITE_TOKEN;
+
+// 無 Blob 時的記憶體備援（Vercel serverless 重啟即消失）
 let memoryInquiries: any[] = [];
 
-function getInquiries() {
+// 讀取詢價單（與 cases 相同的 Blob 雙軌策略）
+export async function readInquiries(): Promise<any[]> {
+  if (hasBlob()) {
+    try {
+      const { list } = await import("@vercel/blob");
+      const { blobs } = await list({ prefix: INQUIRIES_BLOB });
+      const target = blobs.find((b) => b.pathname === INQUIRIES_BLOB);
+      if (!target) return [];
+      const res = await fetch(target.url, { cache: "no-store" });
+      if (!res.ok) return [];
+      return await res.json();
+    } catch (e) {
+      console.error("Failed to read inquiries from Blob", e);
+      return memoryInquiries;
+    }
+  }
   try {
     if (fs.existsSync(filePath)) {
-      const data = fs.readFileSync(filePath, "utf-8");
-      return JSON.parse(data);
+      return JSON.parse(fs.readFileSync(filePath, "utf-8"));
     }
   } catch (error) {
     console.error("Failed to read inquiries file, using memory cache", error);
   }
-  
-  if (memoryInquiries.length === 0) {
-    // Return empty or mock default if file read completely fails
-    return [];
-  }
   return memoryInquiries;
 }
 
-function saveInquiries(inquiries: any[]) {
+// 寫入詢價單
+export async function saveInquiries(inquiries: any[]) {
   memoryInquiries = inquiries;
+  if (hasBlob()) {
+    try {
+      const { put } = await import("@vercel/blob");
+      await put(INQUIRIES_BLOB, JSON.stringify(inquiries, null, 2), {
+        access: "public",
+        addRandomSuffix: false,
+        allowOverwrite: true,
+        contentType: "application/json",
+      });
+      return true;
+    } catch (e) {
+      console.error("Failed to write inquiries to Blob, saved in memory only", e);
+      return false;
+    }
+  }
   try {
     const dirPath = path.dirname(filePath);
     if (!fs.existsSync(dirPath)) {
@@ -73,6 +102,8 @@ function buildInquiryEmail(newInquiry: any) {
     `包裝：${newInquiry.needPackaging ? "是" : "否"}`,
     `玻璃罩：${newInquiry.needGlassCase ? "是" : "否"}`,
     `名牌底座：${newInquiry.needNameBase ? "是" : "否"}`,
+    `質感相框(大)：${newInquiry.needFrameLarge ? "是" : "否"}`,
+    `質感相框(小)：${newInquiry.needFrameSmall ? "是" : "否"}`,
     `預估價格：${priceRange}`,
     `用途：${newInquiry.purpose || "未填寫"}`,
     `期望交期：${newInquiry.expectedDelivery || "未填寫"}`,
@@ -123,7 +154,7 @@ export async function GET(request: Request) {
   if (!isAuthed(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const inquiries = getInquiries();
+  const inquiries = await readInquiries();
   return NextResponse.json(inquiries);
 }
 
@@ -137,8 +168,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Client name is required" }, { status: 400 });
     }
 
-    const inquiries = getInquiries();
-    
+    const inquiries = await readInquiries();
+
     // Generate inquiry ID CP-XXXXX
     const randomNum = Math.floor(10000 + Math.random() * 90000);
     const id = `CP-${randomNum}`;
@@ -172,6 +203,8 @@ export async function POST(request: Request) {
       needPackaging: body.needPackaging === true,
       needGlassCase: body.needGlassCase === true,
       needNameBase: body.needNameBase === true,
+      needFrameLarge: body.needFrameLarge === true,
+      needFrameSmall: body.needFrameSmall === true,
       estLow,
       estHigh,
       purpose: body.purpose || "",
@@ -195,7 +228,7 @@ export async function POST(request: Request) {
     }
 
     inquiries.unshift(newInquiry); // Add to the beginning
-    saveInquiries(inquiries);
+    await saveInquiries(inquiries);
 
     // Google Sheets Integration forwarding (if configured)
     const sheetsWebhook = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
@@ -223,6 +256,8 @@ export async function POST(request: Request) {
             needPackaging: newInquiry.needPackaging ? "是" : "否",
             needGlassCase: newInquiry.needGlassCase ? "是" : "否",
             needNameBase: newInquiry.needNameBase ? "是" : "否",
+            needFrameLarge: newInquiry.needFrameLarge ? "是" : "否",
+            needFrameSmall: newInquiry.needFrameSmall ? "是" : "否",
             estLow: newInquiry.estLow,
             estHigh: newInquiry.estHigh,
             purpose: newInquiry.purpose,

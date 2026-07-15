@@ -40,7 +40,7 @@ const productTypes = [
   { name: "Q版人像公仔", factor: 1.0, defaultOwnFile: false },
   { name: "寵物公仔", factor: 1.0, defaultOwnFile: false },
   { name: "角色/AI圖轉公仔", factor: 1.0, defaultOwnFile: false },
-  { name: "企業展示樣品", factor: 1.0, defaultOwnFile: false }, // 2026-07-15 起比照文創模型計價（原 factor 1.2＋NT$5,000 起）
+  { name: "企業展示樣品", factor: 1.2, defaultOwnFile: false }, // 企業禮品組 NT$5,000 起
   { name: "大量列印服務", factor: 1.0, defaultOwnFile: true }, // 自備檔代印
   { name: "文創模型", factor: 1.0, defaultOwnFile: false },
 ];
@@ -137,7 +137,11 @@ function CalculatorContent() {
       unitHigh += frameSmallFee;
     }
 
-    // （2026-07-15 移除「企業禮品組 NT$5,000 起」下限：企業展示樣品比照文創模型計價）
+    // 企業禮品組 NT$5,000 起（表10）
+    if (productType === "企業展示樣品" && unitLow < 5000) {
+      unitLow = 5000;
+      if (unitHigh < unitLow + 500) unitHigh = unitLow + 1000;
+    }
 
     // 5. 數量（以區間代表值估算；20 件以上專案另估）
     let qtyNumber = 1;

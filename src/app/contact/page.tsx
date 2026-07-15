@@ -1,5 +1,7 @@
 "use client";
 
+import { safeTrackEvent } from "@/lib/analytics";
+
 import { useState } from "react";
 import QChan from "@/components/QChan";
 
@@ -61,7 +63,7 @@ export default function ContactPage() {
                   <div className="space-y-0.5">
                     <p className="text-brand-dark font-bold">官方 LINE</p>
                     <a
-                      href="https://line.me/ti/p/_GL-WZNcN_"
+                      href="https://line.me/ti/p/_GL-WZNcN_" onClick={() => safeTrackEvent("click_line", { source: "contact", page_path: "/contact" })}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-brand-orange transition-colors break-all"

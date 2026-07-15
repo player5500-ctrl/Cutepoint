@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/adminAuth";
 import {
+  DEFAULT_PRODUCTS,
   readProducts,
   saveProducts,
   persistImage,
@@ -21,13 +22,21 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const products = await readProducts();
+    const products = [...(await readProducts())];
     const idx = products.findIndex((p) => p.id === id);
-    if (idx === -1) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
-    }
-
-    const current = products[idx];
+    const current =
+      idx === -1
+        ? DEFAULT_PRODUCTS.find((p) => p.id === id) ?? {
+            id,
+            name: "",
+            desc: "",
+            specs: [],
+            image: "/assets/q_jiang.jpg",
+            bg: "",
+            tagColor: "",
+            createdAt: new Date().toISOString(),
+          }
+        : products[idx];
 
     // 有上傳新照片才重新存圖；否則沿用原圖
     let image = current.image;
@@ -47,9 +56,14 @@ export async function PUT(
       bg: body.bg ?? current.bg,
       tagColor: body.tagColor ?? current.tagColor,
       image,
+      createdAt: body.createdAt ?? current.createdAt,
     };
 
-    products[idx] = updated;
+    if (idx === -1) {
+      products.push(updated);
+    } else {
+      products[idx] = updated;
+    }
     await saveProducts(products);
     return NextResponse.json({ success: true, data: updated });
   } catch (e) {
@@ -71,7 +85,7 @@ export async function DELETE(
     const products = await readProducts();
     const target = products.find((p) => p.id === id);
     if (!target) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+      return NextResponse.json({ success: true });
     }
 
     // 連同 Blob 上的照片一併刪除

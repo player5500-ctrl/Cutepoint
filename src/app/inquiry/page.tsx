@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import QChan from "@/components/QChan";
+import { safeTrackEvent } from "@/lib/analytics";
 
 const productTypes = [
   "Q版人像公仔",
@@ -19,6 +20,11 @@ const complexities = ["簡單", "一般", "複雜"];
 
 function InquiryFormContent() {
   const router = useRouter();
+
+  // 進入詢價頁
+  useEffect(() => {
+    safeTrackEvent("open_inquiry", { page_path: "/inquiry" });
+  }, []);
   const searchParams = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,7 +44,9 @@ function InquiryFormContent() {
   const [needPackaging, setNeedPackaging] = useState(false);
   const [needGlassCase, setNeedGlassCase] = useState(false);
   const [needNameBase, setNeedNameBase] = useState(false);
-  
+  const [needFrameLarge, setNeedFrameLarge] = useState(false);
+  const [needFrameSmall, setNeedFrameSmall] = useState(false);
+
   const [estPriceRange, setEstPriceRange] = useState("");
   const [purpose, setPurpose] = useState("");
   const [expectedDelivery, setExpectedDelivery] = useState("");
@@ -82,6 +90,12 @@ function InquiryFormContent() {
     const baseFromQuery = searchParams.get("base");
     if (baseFromQuery) setNeedNameBase(baseFromQuery === "true");
 
+    const frameLFromQuery = searchParams.get("frameL");
+    if (frameLFromQuery) setNeedFrameLarge(frameLFromQuery === "true");
+
+    const frameSFromQuery = searchParams.get("frameS");
+    if (frameSFromQuery) setNeedFrameSmall(frameSFromQuery === "true");
+
     const lowFromQuery = searchParams.get("low");
     const highFromQuery = searchParams.get("high");
     if (lowFromQuery && highFromQuery) {
@@ -101,6 +115,8 @@ function InquiryFormContent() {
     isUrgent ? "急件加速" : "",
     needGlassCase ? "加購玻璃罩" : "",
     needNameBase ? "加購名牌底座" : "",
+    needFrameLarge ? "加購質感相框(大)" : "",
+    needFrameSmall ? "加購質感相框(小)" : "",
     needPackaging ? "加購包裝" : "",
   ].filter(Boolean);
 
@@ -192,6 +208,8 @@ function InquiryFormContent() {
           needPackaging,
           needGlassCase,
           needNameBase,
+          needFrameLarge,
+          needFrameSmall,
           estPriceRange,
           purpose,
           expectedDelivery,
@@ -205,6 +223,9 @@ function InquiryFormContent() {
         throw new Error(result.error || "送出失敗，請重試或聯絡客服");
       }
       
+      // 送出詢價成功（僅非個資參數）
+      safeTrackEvent("submit_inquiry", { product_type: productType, size, quantity, source: "inquiry_form", page_path: "/inquiry" });
+
       // Navigate to Success Page
       router.push(`/success?id=${result.id}&name=${encodeURIComponent(name)}`);
     } catch (err: any) {
