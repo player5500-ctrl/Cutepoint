@@ -80,6 +80,36 @@ JSON 檔內容長這樣，等一下會用到兩個欄位：
 1. 開 `https://cutepoint.vercel.app/admin` → 輸入後台密碼登入。
 2. 右上按「📊 GA 數據」→ 進入 `/admin/analytics`。
 3. 正常會看到：今日使用者、近 7 天使用者/瀏覽量、詢價/試算/LINE/FB 事件數、熱門頁面、事件排行、流量來源、7 天趨勢圖。
+4. 上方可切換「今天 / 近 7 天 / 近 30 天」，切換後所有卡片、排行與趨勢圖都會一起更新。
+
+---
+
+## 步驟 6：讓 Facebook 導流可以被分析（UTM 標記）
+
+後台的「📣 Facebook 導流分析」區塊會自動辨識 `facebook`、`m.facebook.com`、`l.facebook.com`、
+`lm.facebook.com`、Meta 廣告、Messenger 等來源。但要看到「哪一篇貼文、哪一個活動」帶來詢價，
+貼文網址必須自己加上 UTM 參數。
+
+貼文網址範例（後台也有「複製範例網址」按鈕）：
+
+```
+https://cutepoint.vercel.app/?utm_source=facebook&utm_medium=organic_social&utm_campaign=pet_figure&utm_content=calico_cat_post
+```
+
+| 參數 | 意義 | 建議值 |
+|---|---|---|
+| `utm_source` | 流量平台 | `facebook` |
+| `utm_medium` | 自然貼文或付費廣告 | 自然貼文 `organic_social`／付費廣告 `paid_social` |
+| `utm_campaign` | 行銷活動名稱 | 例：`pet_figure`、`year_end_gift` |
+| `utm_content` | 個別貼文名稱 | 例：`calico_cat_post` |
+
+注意事項：
+
+- 沒帶 UTM 的 Facebook 流量仍會計入「FB 導入工作階段」，並歸類為自然流量，
+  但不會出現在「熱門活動 / 熱門貼文」排行（後台會顯示提示文字）。
+- 建議只用英文小寫與底線，避免中文與空白，報表比較好讀。
+- 同一個活動的不同貼文，`utm_campaign` 相同、`utm_content` 各自不同。
+- 轉換率＝該來源的 `submit_inquiry` ÷ 工作階段數；工作階段為 0 時顯示 `0%`。
 
 ---
 
@@ -93,6 +123,8 @@ JSON 檔內容長這樣，等一下會用到兩個欄位：
 | 數字全是 0 | GA4 資源是新的、還沒累積數據；或事件名稱未在前台觸發過 | 等數據進來；到 GA「即時報表」確認事件有進 |
 | 剛改完 GA 設定但後台數字沒變 | 後台有 1 小時快取 | 屬正常，最多 1 小時後更新 |
 | 出現「⚠️ 快取數據」黃色提示 | 當下連不上 GA4，顯示上次成功的快取 | 通常暫時性，稍後自動恢復 |
+| Facebook 區塊顯示「尚無可辨識的 Facebook UTM 流量」 | 貼文網址沒帶 UTM 參數 | 依步驟 6 在貼文網址加上 UTM |
+| FB 導入工作階段有數字，但熱門貼文空白 | 有 FB 流量但沒有 `utm_content` | 之後的貼文都補上 `utm_content` |
 
 ## 安全備忘
 
