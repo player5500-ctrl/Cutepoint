@@ -113,6 +113,28 @@ https://cutepoint.vercel.app/?utm_source=facebook&utm_medium=organic_social&utm_
 
 ---
 
+## 步驟 7：如果同一個 GA4 資源混了別的網站數據
+
+如果你的 Google Analytics 帳號下，這個資源（Property）同時被別的網站或別的客戶共用
+（同一個資源掛了多個資料串流），後台報表預設會把所有網站的流量混在一起，出現不屬於萌點的
+頁面（例如 `/blog/...`、`/login`）或奇怪的流量來源。
+
+後台已經自動加上網站過濾（比對網址 hostname 是否包含 `cutepoint`），只會統計真正屬於
+`cutepoint.vercel.app`（含 PR 預覽網址 `cutepoint-git-xxx.vercel.app`）的數據。
+
+如果日後正式站改用其他網域（自訂網域），或想改用不同的比對字串，可以加這個環境變數：
+
+```
+GA4_HOSTNAME_FILTER_CUTEPOINT=你的網域關鍵字
+```
+
+例如改用 `www.cutepoint3d.com.tw`，就設成 `cutepoint3d`。未設定時預設比對 `cutepoint`。
+
+最根本的做法還是建議：跟管理 GA4 帳號的人確認，這個資源底下是不是真的有多個資料串流；
+如果可以的話，最好幫萌點網站申請獨立的 GA4 資源，避免報表混淆。
+
+---
+
 ## 常見問題排除
 
 | 畫面 / 錯誤 | 原因 | 解法 |

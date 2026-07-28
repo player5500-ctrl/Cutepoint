@@ -86,6 +86,41 @@ function getEnv() {
   return { propertyId, clientEmail, privateKey };
 }
 
+// 若同一個 GA4 資源（Property）底下還有其他網站的資料串流，report 預設會把所有網站的
+// 流量混在一起回傳。這裡一律用 hostName 過濾，只取真正屬於萌點網站的資料。
+// 可用 GA4_HOSTNAME_FILTER_CUTEPOINT 覆寫比對字串（預設比對是否包含 "cutepoint"，
+// 同時涵蓋正式站 cutepoint.vercel.app 與 PR 預覽網址 cutepoint-git-xxx.vercel.app）。
+function siteHostFilterValue(): string {
+  return process.env.GA4_HOSTNAME_FILTER_CUTEPOINT || "cutepoint";
+}
+
+interface Ga4Filter {
+  filter?: {
+    fieldName: string;
+    stringFilter?: { matchType: string; value: string; caseSensitive?: boolean };
+    inListFilter?: { values: string[]; caseSensitive?: boolean };
+  };
+  andGroup?: { expressions: Ga4Filter[] };
+}
+
+function hostFilter(): Ga4Filter {
+  return {
+    filter: {
+      fieldName: "hostName",
+      stringFilter: {
+        matchType: "CONTAINS",
+        value: siteHostFilterValue(),
+        caseSensitive: false,
+      },
+    },
+  };
+}
+
+// 把「host 一定要過濾」跟「查詢本來就有的篩選條件（例如 eventName）」用 AND 合併
+function withHostFilter(extra?: Ga4Filter): Ga4Filter {
+  return extra ? { andGroup: { expressions: [hostFilter(), extra] } } : hostFilter();
+}
+
 // 是否已設定 GA4 環境變數（未設定時 API 回報「尚未設定」，不報錯）
 export function gaConfigured(): boolean {
   const { propertyId, clientEmail, privateKey } = getEnv();
@@ -280,17 +315,20 @@ export async function fetchCutepointAnalytics(
     runReport(token, {
       dateRanges: [{ startDate: "today", endDate: "today" }],
       metrics: [{ name: "activeUsers" }],
+      dimensionFilter: withHostFilter(),
     }),
     // 區間使用者 / 瀏覽量
     runReport(token, {
       dateRanges,
       metrics: [{ name: "activeUsers" }, { name: "screenPageViews" }],
+      dimensionFilter: withHostFilter(),
     }),
     // 每日趨勢
     runReport(token, {
       dateRanges,
       dimensions: [{ name: "date" }],
       metrics: [{ name: "activeUsers" }, { name: "screenPageViews" }],
+      dimensionFilter: withHostFilter(),
       orderBys: [{ dimension: { dimensionName: "date" } }],
       limit: 100,
     }),
@@ -299,6 +337,7 @@ export async function fetchCutepointAnalytics(
       dateRanges,
       dimensions: [{ name: "pagePath" }],
       metrics: [{ name: "screenPageViews" }],
+      dimensionFilter: withHostFilter(),
       orderBys: [{ metric: { metricName: "screenPageViews" }, desc: true }],
       limit: 5,
     }),
@@ -307,6 +346,7 @@ export async function fetchCutepointAnalytics(
       dateRanges,
       dimensions: [{ name: "sessionSource" }],
       metrics: [{ name: "sessions" }],
+      dimensionFilter: withHostFilter(),
       orderBys: [{ metric: { metricName: "sessions" }, desc: true }],
       limit: 5,
     }),
@@ -315,6 +355,7 @@ export async function fetchCutepointAnalytics(
       dateRanges,
       dimensions: [{ name: "eventName" }],
       metrics: [{ name: "eventCount" }],
+      dimensionFilter: withHostFilter(),
       orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
       limit: 50,
     }),
@@ -328,6 +369,7 @@ export async function fetchCutepointAnalytics(
         { name: "sessionManualAdContent" },
       ],
       metrics: [{ name: "sessions" }],
+      dimensionFilter: withHostFilter(),
       orderBys: [{ metric: { metricName: "sessions" }, desc: true }],
       limit: 1000,
     }),
@@ -341,12 +383,12 @@ export async function fetchCutepointAnalytics(
         { name: "eventName" },
       ],
       metrics: [{ name: "eventCount" }],
-      dimensionFilter: {
+      dimensionFilter: withHostFilter({
         filter: {
           fieldName: "eventName",
           inListFilter: { values: FB_EVENTS, caseSensitive: true },
         },
-      },
+      }),
       limit: 2000,
     }),
     // Facebook 每日工作階段
@@ -354,6 +396,7 @@ export async function fetchCutepointAnalytics(
       dateRanges,
       dimensions: [{ name: "date" }, { name: "sessionSource" }, { name: "sessionMedium" }],
       metrics: [{ name: "sessions" }],
+      dimensionFilter: withHostFilter(),
       orderBys: [{ dimension: { dimensionName: "date" } }],
       limit: 5000,
     }),
@@ -362,12 +405,12 @@ export async function fetchCutepointAnalytics(
       dateRanges,
       dimensions: [{ name: "date" }, { name: "sessionSource" }, { name: "eventName" }],
       metrics: [{ name: "eventCount" }],
-      dimensionFilter: {
+      dimensionFilter: withHostFilter({
         filter: {
           fieldName: "eventName",
           inListFilter: { values: ["submit_inquiry", "click_line"], caseSensitive: true },
         },
-      },
+      }),
       orderBys: [{ dimension: { dimensionName: "date" } }],
       limit: 5000,
     }),
