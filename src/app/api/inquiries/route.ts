@@ -11,11 +11,42 @@ const inquiryNotificationEmail = "sophia_chen@microjet.com.tw";
 // 是否已設定 Vercel Blob（線上永久儲存）；未設定則用本機檔案 + 記憶體備援
 const hasBlob = () => !!process.env.BLOB_READ_WRITE_TOKEN;
 
+// 詢價單資料結構（Blob / 檔案內的 JSON）
+export interface InquiryRecord {
+  id: string;
+  createdAt: string;
+  clientName: string;
+  lineId?: string;
+  phone?: string;
+  email?: string;
+  productType?: string;
+  size?: string;
+  quantity?: string;
+  needModeling?: boolean;
+  needRetouching?: boolean;
+  complexity?: string;
+  isUrgent?: boolean;
+  needPackaging?: boolean;
+  needGlassCase?: boolean;
+  needNameBase?: boolean;
+  needFrameLarge?: boolean;
+  needFrameSmall?: boolean;
+  estLow?: number;
+  estHigh?: number;
+  purpose?: string;
+  expectedDelivery?: string;
+  fileNames?: string[];
+  status?: string;
+  assignee?: string;
+  officialQuote?: number;
+  internalNotes?: string;
+}
+
 // 無 Blob 時的記憶體備援（Vercel serverless 重啟即消失）
-let memoryInquiries: any[] = [];
+let memoryInquiries: InquiryRecord[] = [];
 
 // 讀取詢價單（與 cases 相同的 Blob 雙軌策略）
-export async function readInquiries(): Promise<any[]> {
+export async function readInquiries(): Promise<InquiryRecord[]> {
   if (hasBlob()) {
     try {
       const { list } = await import("@vercel/blob");
@@ -41,7 +72,7 @@ export async function readInquiries(): Promise<any[]> {
 }
 
 // 寫入詢價單
-export async function saveInquiries(inquiries: any[]) {
+export async function saveInquiries(inquiries: InquiryRecord[]) {
   memoryInquiries = inquiries;
   if (hasBlob()) {
     try {
@@ -71,12 +102,12 @@ export async function saveInquiries(inquiries: any[]) {
   }
 }
 
-function formatCurrency(amount: number) {
+function formatCurrency(amount?: number) {
   if (!amount) return "未試算";
   return `NT$${amount.toLocaleString("zh-TW")}`;
 }
 
-function buildInquiryEmail(newInquiry: any) {
+function buildInquiryEmail(newInquiry: InquiryRecord) {
   const priceRange = newInquiry.estLow || newInquiry.estHigh
     ? `${formatCurrency(newInquiry.estLow)} ~ ${formatCurrency(newInquiry.estHigh)}`
     : "未試算";
@@ -107,7 +138,7 @@ function buildInquiryEmail(newInquiry: any) {
     `預估價格：${priceRange}`,
     `用途：${newInquiry.purpose || "未填寫"}`,
     `期望交期：${newInquiry.expectedDelivery || "未填寫"}`,
-    `上傳檔案：${newInquiry.fileNames.length ? newInquiry.fileNames.join(", ") : "無"}`,
+    `上傳檔案：${newInquiry.fileNames?.length ? newInquiry.fileNames.join(", ") : "無"}`,
     `備註：${newInquiry.internalNotes || "未填寫"}`,
   ];
 
@@ -120,7 +151,7 @@ function buildInquiryEmail(newInquiry: any) {
   };
 }
 
-async function sendInquiryEmailNotification(newInquiry: any) {
+async function sendInquiryEmailNotification(newInquiry: InquiryRecord) {
   const smtpUser = process.env.GMAIL_SMTP_USER;
   const smtpPassword = process.env.GMAIL_APP_PASSWORD;
   if (!smtpUser || !smtpPassword) {

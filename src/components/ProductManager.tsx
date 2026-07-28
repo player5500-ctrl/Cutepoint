@@ -88,6 +88,8 @@ export default function ProductManager() {
   };
 
   useEffect(() => {
+    // fetchProducts 內的 setState 皆在 await 之後（非同步），此規則為誤判
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts();
   }, []);
 

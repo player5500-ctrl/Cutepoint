@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/adminAuth";
-import { readCases } from "../route";
+import { readCases, type CaseRecord } from "../route";
 import fs from "fs";
 import path from "path";
 
 const filePath = path.join(process.cwd(), "src/data/cases.json");
 const hasBlob = () => !!process.env.BLOB_READ_WRITE_TOKEN;
 
-async function saveCases(cases: any[]) {
+async function saveCases(cases: CaseRecord[]) {
   if (hasBlob()) {
     const { put } = await import("@vercel/blob");
     await put("cases.json", JSON.stringify(cases, null, 2), {
@@ -56,13 +56,13 @@ export async function PUT(
     const { title, category, size, days, desc, imageData } = body;
 
     const cases = await readCases();
-    const idx = cases.findIndex((c: any) => c.id === id);
+    const idx = cases.findIndex((c) => c.id === id);
     if (idx === -1) {
       return NextResponse.json({ error: "Case not found" }, { status: 404 });
     }
 
     const current = cases[idx];
-    let img: string = current.img;
+    let img: string = current.img ?? "";
 
     // 若有帶入新的照片 data URL 才更新圖片，並嘗試清掉舊圖
     if (typeof imageData === "string" && imageData.startsWith("data:")) {
@@ -113,7 +113,7 @@ export async function DELETE(
   try {
     const { id } = await params;
     const cases = await readCases();
-    const target = cases.find((c: any) => c.id === id);
+    const target = cases.find((c) => c.id === id);
     if (!target) {
       return NextResponse.json({ error: "Case not found" }, { status: 404 });
     }
@@ -128,7 +128,7 @@ export async function DELETE(
       }
     }
 
-    await saveCases(cases.filter((c: any) => c.id !== id));
+    await saveCases(cases.filter((c) => c.id !== id));
     return NextResponse.json({ success: true });
   } catch (e) {
     console.error("Error deleting case", e);

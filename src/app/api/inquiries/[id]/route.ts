@@ -16,7 +16,7 @@ export async function PUT(
     const body = await request.json();
     
     const inquiries = await readInquiries();
-    const index = inquiries.findIndex((inq: any) => inq.id === id);
+    const index = inquiries.findIndex((inq) => inq.id === id);
 
     if (index === -1) {
       return NextResponse.json({ error: "Inquiry not found" }, { status: 404 });

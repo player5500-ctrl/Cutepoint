@@ -37,7 +37,6 @@ export default function AdminGate({ children }: { children: ReactNode }) {
       const ok = await verify(getAdminKey(), false);
       if (!ok) setStatus("locked");
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (status === "checking") {
