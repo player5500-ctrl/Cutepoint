@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
+import TrackedLink from "@/components/TrackedLink";
+import { FACEBOOK_URL, LINE_URL } from "@/lib/site";
 
 export default function Footer() {
   return (
@@ -73,14 +75,25 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm text-brand-muted">
               <li className="flex items-center gap-2">
                 <span className="text-brand-orange">LINE ID:</span>
-                <a
-                  href="https://line.me/ti/p/_GL-WZNcN_"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <TrackedLink
+                  href={LINE_URL}
+                  event="click_line"
+                  params={{ source: "footer" }}
                   className="hover:text-brand-orange transition-colors break-all"
                 >
-                  https://line.me/ti/p/_GL-WZNcN_
-                </a>
+                  {LINE_URL}
+                </TrackedLink>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-brand-orange">Facebook:</span>
+                <TrackedLink
+                  href={FACEBOOK_URL}
+                  event="click_facebook"
+                  params={{ source: "footer" }}
+                  className="hover:text-brand-orange transition-colors break-all"
+                >
+                  萌點3D 粉絲頁
+                </TrackedLink>
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-brand-orange">電話:</span>

@@ -27,6 +27,9 @@ function InquiryFormContent() {
   }, []);
   const searchParams = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // 防止連點造成 submit_inquiry 重複觸發
+  const submittingRef = useRef(false);
+  const trackedSubmitRef = useRef(false);
 
   // Form states
   const [name, setName] = useState("");
@@ -59,6 +62,7 @@ function InquiryFormContent() {
   const [formError, setFormError] = useState("");
 
   // Prepopulate from calculator URL queries
+  /* eslint-disable react-hooks/set-state-in-effect -- 由網址 query 一次性預填表單，非串聯渲染 */
   useEffect(() => {
     const typeFromQuery = searchParams.get("type");
     if (typeFromQuery) setProductType(typeFromQuery);
@@ -104,6 +108,7 @@ function InquiryFormContent() {
       setEstPriceRange("尚未試算，直接填寫");
     }
   }, [searchParams]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const priceBasisItems = [
     `產品：${productType}`,
@@ -185,6 +190,8 @@ function InquiryFormContent() {
       return;
     }
 
+    if (submittingRef.current) return; // 連點保護
+    submittingRef.current = true;
     setIsSubmitting(true);
 
     try {
@@ -223,14 +230,25 @@ function InquiryFormContent() {
         throw new Error(result.error || "送出失敗，請重試或聯絡客服");
       }
       
-      // 送出詢價成功（僅非個資參數）
-      safeTrackEvent("submit_inquiry", { product_type: productType, size, quantity, source: "inquiry_form", page_path: "/inquiry" });
+      // 送出詢價成功後才追蹤（僅非個資參數，不含姓名/電話/Email/留言/金額）
+      if (!trackedSubmitRef.current) {
+        trackedSubmitRef.current = true;
+        safeTrackEvent("submit_inquiry", {
+          product_type: productType,
+          size,
+          quantity,
+          complexity,
+          source: "inquiry_form",
+          page_path: "/inquiry",
+        });
+      }
 
       // Navigate to Success Page
       router.push(`/success?id=${result.id}&name=${encodeURIComponent(name)}`);
-    } catch (err: any) {
-      setFormError(err.message || "發生未知錯誤，請重試");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error && err.message ? err.message : "發生未知錯誤，請重試");
     } finally {
+      submittingRef.current = false;
       setIsSubmitting(false);
     }
   };
