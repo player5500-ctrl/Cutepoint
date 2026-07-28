@@ -39,15 +39,24 @@ function sanitize(params?: Params): Params {
   return out;
 }
 
-function isLocalhost(): boolean {
-  if (typeof window === "undefined") return false;
-  const h = window.location.hostname;
-  return h === "localhost" || h === "127.0.0.1" || h === "::1" || h.endsWith(".local");
+// 開發用主機：localhost、迴環位址、.local，以及區網 IP（用手機連 npm run dev 的情況）
+export function isDevHost(hostname: string): boolean {
+  const h = hostname.toLowerCase();
+  if (h === "localhost" || h === "127.0.0.1" || h === "::1" || h === "[::1]") return true;
+  if (h.endsWith(".local") || h.endsWith(".localhost")) return true;
+  // 私有網段：10.x.x.x、192.168.x.x、172.16–31.x.x
+  if (/^10\./.test(h) || /^192\.168\./.test(h)) return true;
+  if (/^172\.(1[6-9]|2\d|3[01])\./.test(h)) return true;
+  return false;
 }
 
-// 是否允許送 GA：需在瀏覽器、有 GA_ID、且非 localhost
+// 是否允許送 GA：需在瀏覽器、有 GA_ID、production build、且非開發用主機
+// NODE_ENV 由 Next 於建置時決定：next dev → development（一律不送）、next build → production
 export function gaEnabled(): boolean {
-  return typeof window !== "undefined" && !!GA_ID && !isLocalhost();
+  if (typeof window === "undefined") return false;
+  if (!GA_ID) return false;
+  if (process.env.NODE_ENV !== "production") return false;
+  return !isDevHost(window.location.hostname);
 }
 
 declare global {

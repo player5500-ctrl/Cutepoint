@@ -3,7 +3,6 @@
 import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import Image from "next/image";
 import QChan from "@/components/QChan";
 
 function SuccessPageContent() {
@@ -11,10 +10,12 @@ function SuccessPageContent() {
   const [inquiryId, setInquiryId] = useState("");
   const [clientName, setClientName] = useState("");
 
+  /* eslint-disable react-hooks/set-state-in-effect -- 由網址 query 一次性帶入顯示資訊 */
   useEffect(() => {
     setInquiryId(searchParams.get("id") || "CP-" + Math.floor(Math.random() * 90000 + 10000));
     setClientName(searchParams.get("name") || "顧客");
   }, [searchParams]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   return (
     <div className="max-w-2xl mx-auto bg-white rounded-3xl border border-brand-border/60 p-8 md:p-12 shadow-sm text-center space-y-8">

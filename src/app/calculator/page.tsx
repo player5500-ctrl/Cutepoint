@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import QChan from "@/components/QChan";
 import { safeTrackEvent } from "@/lib/analytics";
+import { LINE_URL } from "@/lib/site";
 
 // ====== 定價資料（以成本模型重訂，2026-06）======
 // 基準：各尺寸 Q醬標準件「材料成本(新耗材)」× 加成；下限=×2、上限=×2.5
@@ -76,6 +77,8 @@ function CalculatorContent() {
     if (typeFromQuery) {
       const matched = productTypes.find((t) => t.name === typeFromQuery);
       if (matched) {
+        // 由網址 query 預填規格，屬於一次性同步，非串聯渲染
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setProductType(matched.name);
         setHasOwnFile(matched.defaultOwnFile);
       }
@@ -175,12 +178,68 @@ function CalculatorContent() {
 
   const { low, high, days } = calculateEstimate();
 
-  const LINE_URL = "https://line.me/ti/p/_GL-WZNcN_";
   const [lineCopied, setLineCopied] = useState(false);
+
+  // ====== calculate_price 追蹤 ======
+  // 觸發時機：使用者調整規格、試算結果穩定後（0.8 秒無再變動）才送出，
+  // 或在按下 LINE / 詢價 CTA 時補送。同一組規格只送一次，避免重複觸發。
+  // 只傳非個資欄位（產品類型、尺寸、數量、複雜度…），不含金額與聯絡資料。
+  const specKey = [
+    productType,
+    size,
+    quantity,
+    complexity,
+    hasOwnFile,
+    isUrgent,
+    needGlassCase,
+    needNameBase,
+    needGiftBox,
+    needFrameLarge,
+    needFrameSmall,
+  ].join("|");
+
+  const trackedSpecRef = useRef<string>("");
+  const readyRef = useRef(false);
+
+  // 進站後 1.2 秒才開始追蹤，避開網址 query 預填造成的初始變動
+  useEffect(() => {
+    const t = setTimeout(() => {
+      readyRef.current = true;
+    }, 1200);
+    return () => clearTimeout(t);
+  }, []);
+
+  const trackCalculateOnce = useCallback(
+    (source: string) => {
+      if (trackedSpecRef.current === specKey) return; // 同一組規格不重複送
+      trackedSpecRef.current = specKey;
+      safeTrackEvent("calculate_price", {
+        product_type: productType,
+        size,
+        quantity,
+        complexity,
+        own_file: hasOwnFile,
+        urgent: isUrgent,
+        source,
+        page_path: "/calculator",
+      });
+    },
+    [specKey, productType, size, quantity, complexity, hasOwnFile, isUrgent]
+  );
+
+  // 規格變動 → 試算完成（防抖 0.8 秒）
+  useEffect(() => {
+    if (!readyRef.current) {
+      trackedSpecRef.current = specKey; // 初始 / 預填值不算一次試算
+      return;
+    }
+    const t = setTimeout(() => trackCalculateOnce("spec_change"), 800);
+    return () => clearTimeout(t);
+  }, [specKey, trackCalculateOnce]);
 
   // 一鍵把試算結果帶到 LINE，縮短轉換路徑
   const handleAskOnLine = () => {
-    safeTrackEvent("calculate_price", { product_type: productType, size, quantity, source: "line_cta", page_path: "/calculator" });
+    trackCalculateOnce("line_cta");
     safeTrackEvent("click_line", { source: "calculator", page_path: "/calculator" });
     const addons = [needGlassCase && "玻璃罩", needNameBase && "名牌底座", needGiftBox && "禮盒", needFrameLarge && "質感相框(大)", needFrameSmall && "質感相框(小)"].filter(Boolean).join("、");
     const summary = isBulkProject
@@ -198,7 +257,7 @@ function CalculatorContent() {
 
   // Go to Official Inquiry Form and pass params
   const handleGoToInquiry = () => {
-    safeTrackEvent("calculate_price", { product_type: productType, size, quantity, source: "inquiry_cta", page_path: "/calculator" });
+    trackCalculateOnce("inquiry_cta");
     const params = new URLSearchParams({
       type: productType,
       size,

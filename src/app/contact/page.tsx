@@ -1,6 +1,7 @@
 "use client";
 
 import { safeTrackEvent } from "@/lib/analytics";
+import { FACEBOOK_URL } from "@/lib/site";
 
 import { useState } from "react";
 import QChan from "@/components/QChan";
@@ -71,6 +72,21 @@ export default function ContactPage() {
                       https://line.me/ti/p/_GL-WZNcN_
                     </a>
                     <p className="text-[11px] text-brand-orange">（加入後傳送貼圖即可啟動一對一客服諮詢）</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-brand-orange text-lg">👍</span>
+                  <div className="space-y-0.5">
+                    <p className="text-brand-dark font-bold">Facebook 粉絲頁</p>
+                    <a
+                      href={FACEBOOK_URL}
+                      onClick={() => safeTrackEvent("click_facebook", { source: "contact", page_path: "/contact" })}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-brand-orange transition-colors break-all"
+                    >
+                      萌點3d列印 CutePoint 3D
+                    </a>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">

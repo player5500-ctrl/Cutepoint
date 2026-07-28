@@ -9,10 +9,23 @@ const CASES_BLOB = "cases.json";
 // 是否已設定 Vercel Blob（線上永久儲存）
 const hasBlob = () => !!process.env.BLOB_READ_WRITE_TOKEN;
 
-// 無 Blob 時的記憶體備援（Vercel 上重啟即消失）
-let memoryCases: any[] = [];
+// 作品案例資料結構（Blob / 檔案內的 JSON）
+export interface CaseRecord {
+  id: string;
+  title?: string;
+  category?: string;
+  size?: string;
+  days?: string;
+  desc?: string;
+  img?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
-export async function readCases(): Promise<any[]> {
+// 無 Blob 時的記憶體備援（Vercel 上重啟即消失）
+let memoryCases: CaseRecord[] = [];
+
+export async function readCases(): Promise<CaseRecord[]> {
   if (hasBlob()) {
     try {
       const { list } = await import("@vercel/blob");
@@ -37,7 +50,7 @@ export async function readCases(): Promise<any[]> {
   return memoryCases;
 }
 
-async function saveCases(cases: any[]) {
+async function saveCases(cases: CaseRecord[]) {
   memoryCases = cases;
   if (hasBlob()) {
     const { put } = await import("@vercel/blob");
