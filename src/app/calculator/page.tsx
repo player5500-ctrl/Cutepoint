@@ -7,46 +7,53 @@ import QChan from "@/components/QChan";
 import { safeTrackEvent } from "@/lib/analytics";
 import { LINE_URL } from "@/lib/site";
 
-// ====== 定價資料（以成本模型重訂，2026-06）======
-// 基準：各尺寸 Q醬標準件「材料成本(新耗材)」× 加成；下限=×2、上限=×2.5
-// 加成內含機時/人工/照片轉Q版建模/損耗/利潤。4cm 以最低價保護下限訂價。
+// ====== 定價資料（依 2026-08-26 最新「3D 模型價目表」對齊，官網 calculator）======
+// 官網「Q版人物・寵物 3D 公仔」單一價目表，7~15cm 每 1cm 一檔、單一定價（非區間）。
+// low/high 暫時維持相同值（= 官網定價），只是沿用既有 {low,high} 型別以降低改動範圍；
+// ponytail: 若之後需要恢復「區間報價」，只要讓 low < high 即可，畫面已支援兩種顯示。
 const sizePricing: Record<string, { low: number; high: number; tag: string }> = {
-  "4cm": { low: 500, high: 650, tag: "超迷你款" },
-  "6cm": { low: 590, high: 730, tag: "入門引流款" },
-  "8cm": { low: 1100, high: 1370, tag: "基本款・主推" },
-  "10cm": { low: 1880, high: 2350, tag: "主力款" },
-  "12cm": { low: 3000, high: 3750, tag: "禮品款" },
-  "15cm": { low: 5460, high: 6820, tag: "高客單款" },
-  "18cm": { low: 8850, high: 11060, tag: "旗艦款" },
+  "7cm": { low: 1699, high: 1699, tag: "入門款" },
+  "8cm": { low: 1999, high: 1999, tag: "基本款" },
+  "9cm": { low: 2499, high: 2499, tag: "主力款" },
+  "10cm": { low: 2999, high: 2999, tag: "禮品款" },
+  "11cm": { low: 3499, high: 3499, tag: "質感款" },
+  "12cm": { low: 3999, high: 3999, tag: "珍藏款" },
+  "13cm": { low: 4499, high: 4499, tag: "典藏款" },
+  "14cm": { low: 4999, high: 4999, tag: "頂級款" },
+  "15cm": { low: 5499, high: 5499, tag: "旗艦款" },
 };
 
-// 尺寸級距：0=小(4-8cm) 1=中(10-12cm) 2=大(15-18cm)
+// 尺寸級距：0=小(7-9cm) 1=中(10-12cm) 2=大(13-15cm)——沿用既有 3 級距精神，改對應新尺寸表
 const sizeTier = (size: string) =>
-  size === "4cm" || size === "6cm" || size === "8cm" ? 0 : size === "10cm" || size === "12cm" ? 1 : 2;
+  size === "7cm" || size === "8cm" || size === "9cm" ? 0 : size === "10cm" || size === "11cm" || size === "12cm" ? 1 : 2;
 
-// 表11：加價項目（依尺寸級距）
-const glassFees = [250, 400, 600]; // 玻璃罩
-const giftBoxFees = [150, 300, 500]; // 禮盒包裝
-const nameBaseFees = [200, 400, 600]; // 名牌底座
+// 表11：加價項目
+// 2026-08-26 對齊最新價目表圖：玻璃罩改為使用者自選小/大（與公仔尺寸無關）；
+// 禮盒改為固定金額、不再限定旗艦尺寸；新增相框展示套組／磁鐵貼／寵物名牌。
+const glassSmallFee = 300; // 玻璃罩（小）
+const glassLargeFee = 600; // 玻璃罩（大）
+const giftBoxFee = 500; // 禮盒包裝（固定，不再限定最大尺寸）
+const nameBaseFees = [200, 400, 600]; // 名牌底座（依尺寸級距，價目表圖未列，沿用既有金額）
 const frameLargeFee = 150; // 質感相框（大）12×12cm，固定加價
 const frameSmallFee = 100; // 質感相框（小）8×10.5cm，固定加價
-const urgentFees = [300, 500, 800]; // 加急費（每張訂單）
+const frameSetSmallFee = 750; // 相框展示套組（小）模型4×4cm／相框8×10.5cm
+const frameSetLargeFee = 1250; // 相框展示套組（大）模型8×8cm／相框12×12cm
+const magnetStickerFee = 149; // 磁鐵貼
+const petNameTagFee = 699; // 寵物名牌
+const urgentFee = 300; // 加急費（每張訂單，單一價；2026-08-28 Vanny 拍板依價目表拉平，原為依尺寸級距 300/500/800）
 const sceneFees: [number, number][] = [
   [300, 800],
   [500, 1000],
   [800, 1500],
-]; // 場景/配件費（複雜度選「複雜」時，每件）
+]; // 場景/配件費（複雜度選「複雜」時，每件；價目表圖未列，沿用既有金額）
 
+// 2026-08-28 Vanny 拍板：產品類型只留「Q版公仔（寵物/人像）」統一價格；
+// 大量列印服務（自備檔代印）改為另外洽談，不在試算器內。
 const productTypes = [
-  { name: "Q版人像公仔", factor: 1.0, defaultOwnFile: false },
-  { name: "寵物公仔", factor: 1.0, defaultOwnFile: false },
-  { name: "角色/AI圖轉公仔", factor: 1.0, defaultOwnFile: false },
-  { name: "企業展示樣品", factor: 1.0, defaultOwnFile: false }, // 2026-07-15 起比照文創模型計價（原 factor 1.2＋NT$5,000 起）
-  { name: "大量列印服務", factor: 1.0, defaultOwnFile: true }, // 自備檔代印
-  { name: "文創模型", factor: 1.0, defaultOwnFile: false },
+  { name: "Q版公仔（寵物/人像）", factor: 1.0, defaultOwnFile: false },
 ];
 
-const sizes = ["4cm", "6cm", "8cm", "10cm", "12cm", "15cm", "18cm"];
+const sizes = ["7cm", "8cm", "9cm", "10cm", "11cm", "12cm", "13cm", "14cm", "15cm"];
 const quantities = ["1 件", "2–5 件", "6–20 件", "20 件以上"];
 const complexities = [
   { label: "簡單", desc: "少數細節、平滑面多" },
@@ -59,17 +66,22 @@ function CalculatorContent() {
   const searchParams = useSearchParams();
 
   // State initialization
-  const [productType, setProductType] = useState("Q版人像公仔");
+  const [productType, setProductType] = useState("Q版公仔（寵物/人像）");
   const [size, setSize] = useState("10cm");
   const [quantity, setQuantity] = useState("1 件");
   const [hasOwnFile, setHasOwnFile] = useState(false); // 自備 3D 檔
   const [complexity, setComplexity] = useState("一般");
   const [isUrgent, setIsUrgent] = useState(false);
-  const [needGlassCase, setNeedGlassCase] = useState(false); // 玻璃罩
+  const [needGlassSmall, setNeedGlassSmall] = useState(false); // 玻璃罩（小）
+  const [needGlassLarge, setNeedGlassLarge] = useState(false); // 玻璃罩（大）
   const [needNameBase, setNeedNameBase] = useState(false); // 名牌底座
   const [needGiftBox, setNeedGiftBox] = useState(false); // 禮盒包裝
   const [needFrameLarge, setNeedFrameLarge] = useState(false); // 質感相框（大）
   const [needFrameSmall, setNeedFrameSmall] = useState(false); // 質感相框（小）
+  const [needFrameSetSmall, setNeedFrameSetSmall] = useState(false); // 相框展示套組（小）
+  const [needFrameSetLarge, setNeedFrameSetLarge] = useState(false); // 相框展示套組（大）
+  const [needMagnetSticker, setNeedMagnetSticker] = useState(false); // 磁鐵貼
+  const [needPetNameTag, setNeedPetNameTag] = useState(false); // 寵物名牌
 
   // Load category from URL query if present
   useEffect(() => {
@@ -119,17 +131,21 @@ function CalculatorContent() {
     }
 
     // 4. 加購項目（表11，每件）
-    if (needGlassCase) {
-      unitLow += glassFees[tier];
-      unitHigh += glassFees[tier];
+    if (needGlassSmall) {
+      unitLow += glassSmallFee;
+      unitHigh += glassSmallFee;
+    }
+    if (needGlassLarge) {
+      unitLow += glassLargeFee;
+      unitHigh += glassLargeFee;
     }
     if (needNameBase) {
       unitLow += nameBaseFees[tier];
       unitHigh += nameBaseFees[tier];
     }
     if (needGiftBox) {
-      unitLow += giftBoxFees[tier];
-      unitHigh += giftBoxFees[tier];
+      unitLow += giftBoxFee;
+      unitHigh += giftBoxFee;
     }
     if (needFrameLarge) {
       unitLow += frameLargeFee;
@@ -138,6 +154,22 @@ function CalculatorContent() {
     if (needFrameSmall) {
       unitLow += frameSmallFee;
       unitHigh += frameSmallFee;
+    }
+    if (needFrameSetSmall) {
+      unitLow += frameSetSmallFee;
+      unitHigh += frameSetSmallFee;
+    }
+    if (needFrameSetLarge) {
+      unitLow += frameSetLargeFee;
+      unitHigh += frameSetLargeFee;
+    }
+    if (needMagnetSticker) {
+      unitLow += magnetStickerFee;
+      unitHigh += magnetStickerFee;
+    }
+    if (needPetNameTag) {
+      unitLow += petNameTagFee;
+      unitHigh += petNameTagFee;
     }
 
     // （2026-07-15 移除「企業禮品組 NT$5,000 起」下限：企業展示樣品比照文創模型計價）
@@ -153,10 +185,10 @@ function CalculatorContent() {
     let totalLow = Math.round(unitLow * qtyNumber);
     let totalHigh = Math.round(unitHigh * qtyNumber);
 
-    // 6. 加急費（表11：300–800，每張訂單）
+    // 6. 加急費（單一價 NT$300，每張訂單）
     if (isUrgent) {
-      totalLow += urgentFees[tier];
-      totalHigh += urgentFees[tier];
+      totalLow += urgentFee;
+      totalHigh += urgentFee;
     }
 
     // 7. 交期（標準 7 個工作天起，依複雜度/數量/建模方式遞增減）
@@ -191,11 +223,16 @@ function CalculatorContent() {
     complexity,
     hasOwnFile,
     isUrgent,
-    needGlassCase,
+    needGlassSmall,
+    needGlassLarge,
     needNameBase,
     needGiftBox,
     needFrameLarge,
     needFrameSmall,
+    needFrameSetSmall,
+    needFrameSetLarge,
+    needMagnetSticker,
+    needPetNameTag,
   ].join("|");
 
   const trackedSpecRef = useRef<string>("");
@@ -241,7 +278,18 @@ function CalculatorContent() {
   const handleAskOnLine = () => {
     trackCalculateOnce("line_cta");
     safeTrackEvent("click_line", { source: "calculator", page_path: "/calculator" });
-    const addons = [needGlassCase && "玻璃罩", needNameBase && "名牌底座", needGiftBox && "禮盒", needFrameLarge && "質感相框(大)", needFrameSmall && "質感相框(小)"].filter(Boolean).join("、");
+    const addons = [
+      needGlassSmall && "玻璃罩(小)",
+      needGlassLarge && "玻璃罩(大)",
+      needNameBase && "名牌底座",
+      needGiftBox && "禮盒",
+      needFrameLarge && "質感相框(大)",
+      needFrameSmall && "質感相框(小)",
+      needFrameSetSmall && "相框展示套組(小)",
+      needFrameSetLarge && "相框展示套組(大)",
+      needMagnetSticker && "磁鐵貼",
+      needPetNameTag && "寵物名牌",
+    ].filter(Boolean).join("、");
     const summary = isBulkProject
       ? `Hi Q醬！我想詢問大量訂單：${productType}，尺寸 ${size}，數量 ${quantity}，想請你幫我專案報價，謝謝！`
       : `Hi Q醬！我用萌點3D網站試算好了：\n・產品：${productType}\n・尺寸：${size}\n・數量：${quantity}\n・複雜度：${complexity}${addons ? `\n・加購：${addons}` : ""}\n・預估：NT$${low.toLocaleString()}～${high.toLocaleString()}，約 ${days} 個工作天\n想進一步詢問，麻煩你囉！`;
@@ -267,10 +315,14 @@ function CalculatorContent() {
       complexity,
       urgent: isUrgent.toString(),
       pkg: needGiftBox.toString(),
-      glass: needGlassCase.toString(),
+      glass: (needGlassSmall || needGlassLarge).toString(), // /inquiry 目前只認得單一玻璃罩布林值，暫不區分大小（見對話中的 non-scope 說明）
       base: needNameBase.toString(),
       frameL: needFrameLarge.toString(),
       frameS: needFrameSmall.toString(),
+      frameSetS: needFrameSetSmall.toString(),
+      frameSetL: needFrameSetLarge.toString(),
+      magnet: needMagnetSticker.toString(),
+      petTag: needPetNameTag.toString(),
       low: isBulkProject ? "0" : low.toString(),
       high: isBulkProject ? "0" : high.toString(),
     });
@@ -285,10 +337,10 @@ function CalculatorContent() {
           <span className="text-brand-orange">⚙</span> 選擇試算規格
         </h2>
 
-        {/* 1. Product Type */}
+        {/* 1. Product Type（統一價格，僅一種類型） */}
         <div className="space-y-3">
-          <label className="text-sm font-extrabold text-brand-dark tracking-wider">1. 選擇產品類型</label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <label className="text-sm font-extrabold text-brand-dark tracking-wider">1. 產品類型</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {productTypes.map((type) => {
               const isSelected = productType === type.name;
               return (
@@ -307,6 +359,7 @@ function CalculatorContent() {
               );
             })}
           </div>
+          <p className="text-[11px] text-brand-muted/80">寵物與人像統一價格。大量列印／自備檔代印服務請直接洽詢，另外報價。</p>
         </div>
 
         {/* 2. Size & 3. Quantity */}
@@ -324,10 +377,7 @@ function CalculatorContent() {
                   <button
                     key={s}
                     type="button"
-                    onClick={() => {
-                      setSize(s);
-                      if (s !== "18cm") setNeedGiftBox(false); // 禮盒包裝僅限 18cm
-                    }}
+                    onClick={() => setSize(s)}
                     className={`py-2 rounded-xl text-sm font-bold border transition-colors flex flex-col items-center ${
                       isSelected
                         ? "border-brand-orange bg-brand-orange text-white shadow-sm"
@@ -343,8 +393,13 @@ function CalculatorContent() {
               })}
             </div>
             <p className="text-[11px] text-brand-muted font-medium">
-              {size} 建議售價 NT${sizePricing[size].low.toLocaleString()}–{sizePricing[size].high.toLocaleString()}（已含照片轉 Q 版建模）
+              {size} 建議售價 NT$
+              {sizePricing[size].low === sizePricing[size].high
+                ? sizePricing[size].low.toLocaleString()
+                : `${sizePricing[size].low.toLocaleString()}–${sizePricing[size].high.toLocaleString()}`}
+              （已含照片轉 Q 版建模）
             </p>
+            <p className="text-[11px] text-brand-muted/80">更大尺寸另外報價，歡迎直接洽詢</p>
           </div>
 
           {/* Quantity */}
@@ -448,13 +503,16 @@ function CalculatorContent() {
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
-                { label: "玻璃罩", icon: "🫧", desc: "防塵防碰撞，提升收藏感", on: needGlassCase, toggle: () => setNeedGlassCase(!needGlassCase), fee: glassFees[sizeTier(size)] },
+                { label: "玻璃罩（小）", icon: "🫧", desc: "防塵防碰撞，提升收藏感", on: needGlassSmall, toggle: () => setNeedGlassSmall(!needGlassSmall), fee: glassSmallFee },
+                { label: "玻璃罩（大）", icon: "🫧", desc: "防塵防碰撞，提升收藏感", on: needGlassLarge, toggle: () => setNeedGlassLarge(!needGlassLarge), fee: glassLargeFee },
                 { label: "名牌底座", icon: "🏷️", desc: "可刻姓名、日期、祝福語", on: needNameBase, toggle: () => setNeedNameBase(!needNameBase), fee: nameBaseFees[sizeTier(size)] },
                 { label: "質感相框（大）", icon: "🖼️", desc: "12×12cm，襯托擺設更有質感", on: needFrameLarge, toggle: () => setNeedFrameLarge(!needFrameLarge), fee: frameLargeFee },
                 { label: "質感相框（小）", icon: "🖼️", desc: "8×10.5cm，桌上小巧收藏", on: needFrameSmall, toggle: () => setNeedFrameSmall(!needFrameSmall), fee: frameSmallFee },
-                ...(size === "18cm"
-                  ? [{ label: "禮盒包裝", icon: "🎁", desc: "禮盒＋保護材，送禮體面（限 18cm 旗艦款）", on: needGiftBox, toggle: () => setNeedGiftBox(!needGiftBox), fee: giftBoxFees[sizeTier(size)] }]
-                  : []),
+                { label: "相框展示套組（大）", icon: "🖼️", desc: "模型8×8cm＋相框12×12cm，含模型與相框展示效果", on: needFrameSetLarge, toggle: () => setNeedFrameSetLarge(!needFrameSetLarge), fee: frameSetLargeFee },
+                { label: "相框展示套組（小）", icon: "🖼️", desc: "模型4×4cm＋相框8×10.5cm，含模型與相框展示效果", on: needFrameSetSmall, toggle: () => setNeedFrameSetSmall(!needFrameSetSmall), fee: frameSetSmallFee },
+                { label: "磁鐵貼", icon: "🧲", desc: "可愛磁鐵貼，冰箱、置物櫃都好收藏", on: needMagnetSticker, toggle: () => setNeedMagnetSticker(!needMagnetSticker), fee: magnetStickerFee },
+                { label: "寵物名牌", icon: "🐾", desc: "刻上寵物名字，客製骨頭造型門牌", on: needPetNameTag, toggle: () => setNeedPetNameTag(!needPetNameTag), fee: petNameTagFee },
+                { label: "禮盒包裝", icon: "🎁", desc: "禮盒＋保護材，送禮體面", on: needGiftBox, toggle: () => setNeedGiftBox(!needGiftBox), fee: giftBoxFee },
               ].map((item) => (
                 <button
                   key={item.label}
@@ -488,7 +546,7 @@ function CalculatorContent() {
                 急件加價
               </span>
             </label>
-            <p className="text-xs text-brand-muted font-medium">加急費 NT$300–800（依尺寸與排程），優先安排製作</p>
+            <p className="text-xs text-brand-muted font-medium">加急費 NT$300（每張訂單），優先安排製作</p>
           </div>
           <button
             type="button"
@@ -579,7 +637,18 @@ function CalculatorContent() {
               <div className="flex justify-between">
                 <span>加購：</span>
                 <span className="font-bold">
-                  {[needGlassCase && "玻璃罩", needNameBase && "名牌底座", needGiftBox && "禮盒", needFrameLarge && "質感相框(大)", needFrameSmall && "質感相框(小)"].filter(Boolean).join("、") || "無"}
+                  {[
+                    needGlassSmall && "玻璃罩(小)",
+                    needGlassLarge && "玻璃罩(大)",
+                    needNameBase && "名牌底座",
+                    needGiftBox && "禮盒",
+                    needFrameLarge && "質感相框(大)",
+                    needFrameSmall && "質感相框(小)",
+                    needFrameSetSmall && "相框展示套組(小)",
+                    needFrameSetLarge && "相框展示套組(大)",
+                    needMagnetSticker && "磁鐵貼",
+                    needPetNameTag && "寵物名牌",
+                  ].filter(Boolean).join("、") || "無"}
                 </span>
               </div>
             </div>
