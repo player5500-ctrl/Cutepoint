@@ -21,6 +21,12 @@ const sizePricing: Record<string, { low: number; high: number; tag: string }> = 
   "13cm": { low: 4499, high: 4499, tag: "典藏款" },
   "14cm": { low: 4999, high: 4999, tag: "頂級款" },
   "15cm": { low: 5499, high: 5499, tag: "旗艦款" },
+  // 立體浮雕相片（2026-11-13 依價目表圖新增；以吋為單位、單一定價）
+  "3×4吋": { low: 999, high: 999, tag: "" },
+  "4×6吋": { low: 1499, high: 1499, tag: "" },
+  "5×7吋": { low: 1999, high: 1999, tag: "" },
+  "6×8吋": { low: 2699, high: 2699, tag: "" },
+  "8×10吋": { low: 4499, high: 4499, tag: "" },
 };
 
 // 尺寸級距：0=小(7-9cm) 1=中(10-12cm) 2=大(13-15cm)——沿用既有 3 級距精神，改對應新尺寸表
@@ -50,11 +56,15 @@ const sceneFees: [number, number][] = [
 
 // 2026-08-28 Vanny 拍板：產品類型只留「Q版公仔（寵物/人像）」統一價格；
 // 大量列印服務（自備檔代印）改為另外洽談，不在試算器內。
+// 2026-11-13 Vanny 拍板：新增第二個產品類型「立體浮雕相片」，選了之後尺寸換成吋數五檔。
+const RELIEF_TYPE = "立體浮雕相片";
+const figureSizes = ["7cm", "8cm", "9cm", "10cm", "11cm", "12cm", "13cm", "14cm", "15cm"];
+const reliefSizes = ["3×4吋", "4×6吋", "5×7吋", "6×8吋", "8×10吋"];
 const productTypes = [
-  { name: "Q版公仔（寵物/人像）", factor: 1.0, defaultOwnFile: false },
+  { name: "Q版公仔（寵物/人像）", factor: 1.0, defaultOwnFile: false, sizes: figureSizes, defaultSize: "10cm" },
+  { name: RELIEF_TYPE, factor: 1.0, defaultOwnFile: false, sizes: reliefSizes, defaultSize: "4×6吋" },
 ];
 
-const sizes = ["7cm", "8cm", "9cm", "10cm", "11cm", "12cm", "13cm", "14cm", "15cm"];
 const quantities = ["1 件", "2–5 件", "6–20 件", "20 件以上"];
 const complexities = [
   { label: "簡單", desc: "少數細節、平滑面多" },
@@ -92,9 +102,11 @@ function CalculatorContent() {
       const matched = productTypes.find((t) => t.name === typeFromQuery);
       if (matched) {
         // 由網址 query 預填規格，屬於一次性同步，非串聯渲染
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+        /* eslint-disable react-hooks/set-state-in-effect */
         setProductType(matched.name);
         setHasOwnFile(matched.defaultOwnFile);
+        setSize(matched.defaultSize); // 尺寸清單隨產品類型切換（cm／吋）
+        /* eslint-enable react-hooks/set-state-in-effect */
       }
     }
   }, [searchParams]);
@@ -110,9 +122,22 @@ function CalculatorContent() {
     const matched = productTypes.find((t) => t.name === typeName);
     if (matched) {
       setHasOwnFile(matched.defaultOwnFile);
+      // 尺寸清單隨類型切換：目前尺寸不在新清單內就換成該類型預設尺寸
+      if (!matched.sizes.includes(size)) setSize(matched.defaultSize);
+      if (matched.name === RELIEF_TYPE) {
+        // 浮雕相片不適用：複雜度／場景配件、玻璃罩、名牌底座、相框展示套組（含公仔）→ 一併清除，避免殘留計價
+        setComplexity("一般");
+        setNeedGlassSmall(false);
+        setNeedGlassLarge(false);
+        setNeedNameBase(false);
+        setNeedFrameSetSmall(false);
+        setNeedFrameSetLarge(false);
+      }
     }
   };
 
+  const isRelief = productType === RELIEF_TYPE;
+  const sizes = (productTypes.find((t) => t.name === productType) || productTypes[0]).sizes;
   const isBulkProject = quantity === "20 件以上"; // 大量訂單採專案另估
 
   // ====== 估價公式（依企劃書 V7）======
@@ -300,7 +325,7 @@ function CalculatorContent() {
     ].filter(Boolean).join("、");
     const summary = isBulkProject
       ? `Hi Q醬！我想詢問大量訂單：${productType}，尺寸 ${size}，數量 ${quantity}，想請你幫我專案報價，謝謝！`
-      : `Hi Q醬！我用萌點3D網站試算好了：\n・產品：${productType}\n・尺寸：${size}\n・數量：${quantity}\n・複雜度：${complexity}${addons ? `\n・加購：${addons}` : ""}\n・預估：NT$${low.toLocaleString()}～${high.toLocaleString()}，約 ${days} 個工作天\n想進一步詢問，麻煩你囉！`;
+      : `Hi Q醬！我用萌點3D網站試算好了：\n・產品：${productType}\n・尺寸：${size}\n・數量：${quantity}${isRelief ? "" : `\n・複雜度：${complexity}`}${addons ? `\n・加購：${addons}` : ""}\n・預估：NT$${low.toLocaleString()}～${high.toLocaleString()}，約 ${days} 個工作天\n想進一步詢問，麻煩你囉！`;
     try {
       navigator.clipboard?.writeText(summary);
       setLineCopied(true);
@@ -367,7 +392,11 @@ function CalculatorContent() {
               );
             })}
           </div>
-          <p className="text-[11px] text-brand-muted/80">寵物與人像統一價格。大量列印／自備檔代印服務請直接洽詢，另外報價。</p>
+          <p className="text-[11px] text-brand-muted/80">
+            {isRelief
+              ? "立體浮雕相片依相片尺寸（吋）計價。"
+              : "寵物與人像統一價格。大量列印／自備檔代印服務請直接洽詢，另外報價。"}
+          </p>
         </div>
 
         {/* 2. Size & 3. Quantity */}
@@ -376,7 +405,7 @@ function CalculatorContent() {
           <div className="space-y-3">
             <label className="flex items-center gap-2 text-sm font-extrabold text-brand-dark tracking-wider">
               <Image src="/assets/qchan/q_measure.gif" alt="Q醬量尺寸" width={36} height={36} className="rounded-full border border-brand-orange/40 bg-white" />
-              2. 選擇尺寸 (高/長度)
+              {isRelief ? "2. 選擇相片尺寸 (吋)" : "2. 選擇尺寸 (高/長度)"}
             </label>
             <div className="grid grid-cols-3 gap-2">
               {sizes.map((s) => {
@@ -393,9 +422,11 @@ function CalculatorContent() {
                     }`}
                   >
                     <span>{s}</span>
-                    <span className={`text-[9px] font-semibold ${isSelected ? "text-white/85" : "text-brand-muted/80"}`}>
-                      {sizePricing[s].tag}
-                    </span>
+                    {sizePricing[s].tag ? (
+                      <span className={`text-[9px] font-semibold ${isSelected ? "text-white/85" : "text-brand-muted/80"}`}>
+                        {sizePricing[s].tag}
+                      </span>
+                    ) : null}
                   </button>
                 );
               })}
@@ -405,7 +436,7 @@ function CalculatorContent() {
               {sizePricing[size].low === sizePricing[size].high
                 ? sizePricing[size].low.toLocaleString()
                 : `${sizePricing[size].low.toLocaleString()}–${sizePricing[size].high.toLocaleString()}`}
-              （已含照片轉 Q 版建模）
+              {isRelief ? "" : "（已含照片轉 Q 版建模）"}
             </p>
             <p className="text-[11px] text-brand-muted/80">更大尺寸另外報價，歡迎直接洽詢</p>
           </div>
@@ -440,8 +471,8 @@ function CalculatorContent() {
           </div>
         </div>
 
-        {/* 4. Modeling source */}
-        <div className="space-y-3">
+        {/* 4. Modeling source（浮雕相片不適用，隱藏） */}
+        <div className={isRelief ? "hidden" : "space-y-3"}>
           <label className="text-sm font-extrabold text-brand-dark tracking-wider flex items-center justify-between">
             <span>4. 建模方式</span>
             <span className="text-[10px] text-brand-orange font-bold bg-brand-peach-light px-2 py-0.5 rounded-full">售價已含基本建模</span>
@@ -472,8 +503,8 @@ function CalculatorContent() {
           </div>
         </div>
 
-        {/* 5. Complexity */}
-        <div className="space-y-3">
+        {/* 5. Complexity（浮雕相片不適用，隱藏） */}
+        <div className={isRelief ? "hidden" : "space-y-3"}>
           <label className="flex items-center gap-2 text-sm font-extrabold text-brand-dark tracking-wider">
             <Image src="/assets/qchan/q_complexity.gif" alt="Q醬檢視複雜度" width={36} height={36} className="rounded-full border border-brand-orange/40 bg-white" />
             5. 模型複雜度
@@ -522,7 +553,10 @@ function CalculatorContent() {
                 { label: "寵物名牌", icon: "🐾", desc: "11cm，刻上寵物名字，客製骨頭造型門牌", on: needPetNameTag, toggle: () => setNeedPetNameTag(!needPetNameTag), fee: petNameTagFee },
                 { label: "音樂盒", icon: "🎵", desc: "6cm，公仔搭配旋轉音樂盒底座", on: needMusicBox, toggle: () => setNeedMusicBox(!needMusicBox), fee: musicBoxFee },
                 { label: "禮盒包裝", icon: "🎁", desc: "禮盒＋保護材，送禮體面", on: needGiftBox, toggle: () => setNeedGiftBox(!needGiftBox), fee: giftBoxFee },
-              ].map((item) => (
+              ]
+                // 浮雕相片不適用：玻璃罩、名牌底座、相框展示套組（含公仔）
+                .filter((item) => !isRelief || !["玻璃罩（小）", "玻璃罩（大）", "名牌底座", "相框展示套組（大）", "相框展示套組（小）"].includes(item.label))
+                .map((item) => (
                 <button
                   key={item.label}
                   type="button"
@@ -635,14 +669,18 @@ function CalculatorContent() {
                 <span>規格尺寸：</span>
                 <span className="font-bold">{size} | {quantity}</span>
               </div>
-              <div className="flex justify-between">
-                <span>建模方式：</span>
-                <span className="font-bold">{hasOwnFile ? "自備 3D 檔" : "照片轉 Q 版（內含）"}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>複雜度：</span>
-                <span className="font-bold">{complexity}</span>
-              </div>
+              {isRelief ? null : (
+                <>
+                  <div className="flex justify-between">
+                    <span>建模方式：</span>
+                    <span className="font-bold">{hasOwnFile ? "自備 3D 檔" : "照片轉 Q 版（內含）"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>複雜度：</span>
+                    <span className="font-bold">{complexity}</span>
+                  </div>
+                </>
+              )}
               <div className="flex justify-between">
                 <span>加購：</span>
                 <span className="font-bold">
