@@ -103,7 +103,12 @@ function InquiryFormContent() {
     const lowFromQuery = searchParams.get("low");
     const highFromQuery = searchParams.get("high");
     if (lowFromQuery && highFromQuery) {
-      setEstPriceRange(`$${Number(lowFromQuery).toLocaleString()} ~ $${Number(highFromQuery).toLocaleString()} TWD`);
+      // 單一定價（low === high）只顯示一個數字；複雜款才是區間
+      setEstPriceRange(
+        lowFromQuery === highFromQuery
+          ? `$${Number(lowFromQuery).toLocaleString()} TWD`
+          : `$${Number(lowFromQuery).toLocaleString()} ~ $${Number(highFromQuery).toLocaleString()} TWD`
+      );
     } else {
       setEstPriceRange("尚未試算，直接填寫");
     }

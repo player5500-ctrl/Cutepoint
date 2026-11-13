@@ -234,12 +234,18 @@ function CalculatorContent() {
 
     // 最低價保護
     if (totalLow < 500) totalLow = 500;
-    if (totalHigh < totalLow + 200) totalHigh = totalLow + 300;
+    // 2026-11-13 Vanny 拍板：價目表為單一定價，不再硬湊「+300」區間；
+    // 只有選「複雜」（場景/配件費本身是區間）時 low < high，才顯示區間。
+    if (totalHigh < totalLow) totalHigh = totalLow;
 
     return { low: totalLow, high: totalHigh, days: finalDays };
   };
 
   const { low, high, days } = calculateEstimate();
+  const isSinglePrice = low === high; // 單一定價（非複雜款）只顯示一個數字
+  const priceText = isSinglePrice
+    ? `NT$${low.toLocaleString()}`
+    : `NT$${low.toLocaleString()}～${high.toLocaleString()}`;
 
   const [lineCopied, setLineCopied] = useState(false);
 
@@ -325,7 +331,7 @@ function CalculatorContent() {
     ].filter(Boolean).join("、");
     const summary = isBulkProject
       ? `Hi Q醬！我想詢問大量訂單：${productType}，尺寸 ${size}，數量 ${quantity}，想請你幫我專案報價，謝謝！`
-      : `Hi Q醬！我用萌點3D網站試算好了：\n・產品：${productType}\n・尺寸：${size}\n・數量：${quantity}${isRelief ? "" : `\n・複雜度：${complexity}`}${addons ? `\n・加購：${addons}` : ""}\n・預估：NT$${low.toLocaleString()}～${high.toLocaleString()}，約 ${days} 個工作天\n想進一步詢問，麻煩你囉！`;
+      : `Hi Q醬！我用萌點3D網站試算好了：\n・產品：${productType}\n・尺寸：${size}\n・數量：${quantity}${isRelief ? "" : `\n・複雜度：${complexity}`}${addons ? `\n・加購：${addons}` : ""}\n・預估：${priceText}，約 ${days} 個工作天\n想進一步詢問，麻煩你囉！`;
     try {
       navigator.clipboard?.writeText(summary);
       setLineCopied(true);
@@ -622,7 +628,9 @@ function CalculatorContent() {
           <div className="space-y-6 relative">
             {/* Price section */}
             <div className="space-y-1">
-              <span className="text-xs font-semibold text-white/80 tracking-widest uppercase">預估價格區間 (TWD)</span>
+              <span className="text-xs font-semibold text-white/80 tracking-widest uppercase">
+                {isSinglePrice || isBulkProject ? "預估價格 (TWD)" : "預估價格區間 (TWD)"}
+              </span>
               {isBulkProject ? (
                 <div className="space-y-1">
                   <div className="text-2xl md:text-3xl font-black">專案報價</div>
@@ -633,8 +641,12 @@ function CalculatorContent() {
               ) : (
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl md:text-4xl font-black">${low.toLocaleString()}</span>
-                  <span className="text-sm font-bold text-white/85 mx-1">~</span>
-                  <span className="text-3xl md:text-4xl font-black">${high.toLocaleString()}</span>
+                  {isSinglePrice ? null : (
+                    <>
+                      <span className="text-sm font-bold text-white/85 mx-1">~</span>
+                      <span className="text-3xl md:text-4xl font-black">${high.toLocaleString()}</span>
+                    </>
+                  )}
                 </div>
               )}
             </div>
