@@ -7,7 +7,7 @@ import QChan from "@/components/QChan";
 import { safeTrackEvent } from "@/lib/analytics";
 import { LINE_URL } from "@/lib/site";
 
-// ====== 定價資料（依 2026-08-26 最新「3D 模型價目表」對齊，官網 calculator）======
+// ====== 定價資料（依 2026-11-13 最新「3D 模型價目表」核對，官網 calculator）======
 // 官網「Q版人物・寵物 3D 公仔」單一價目表，7~15cm 每 1cm 一檔、單一定價（非區間）。
 // low/high 暫時維持相同值（= 官網定價），只是沿用既有 {low,high} 型別以降低改動範圍；
 // ponytail: 若之後需要恢復「區間報價」，只要讓 low < high 即可，畫面已支援兩種顯示。
@@ -38,8 +38,9 @@ const frameLargeFee = 150; // 質感相框（大）12×12cm，固定加價
 const frameSmallFee = 100; // 質感相框（小）8×10.5cm，固定加價
 const frameSetSmallFee = 750; // 相框展示套組（小）模型4×4cm／相框8×10.5cm
 const frameSetLargeFee = 1250; // 相框展示套組（大）模型8×8cm／相框12×12cm
-const magnetStickerFee = 149; // 磁鐵貼
-const petNameTagFee = 699; // 寵物名牌
+const magnetStickerFee = 399; // 磁鐵貼・各式小文件夾子 3cm（2026-11-02 對齊價目表圖：原價 499、加價購 399；原 149）
+const petNameTagFee = 1299; // 寵物名牌 11cm（2026-11-02 對齊價目表圖；原 699）
+const musicBoxFee = 1599; // 音樂盒 6cm（2026-11-02 依價目表圖新增）
 const urgentFee = 300; // 加急費（每張訂單，單一價；2026-08-28 Vanny 拍板依價目表拉平，原為依尺寸級距 300/500/800）
 const sceneFees: [number, number][] = [
   [300, 800],
@@ -82,6 +83,7 @@ function CalculatorContent() {
   const [needFrameSetLarge, setNeedFrameSetLarge] = useState(false); // 相框展示套組（大）
   const [needMagnetSticker, setNeedMagnetSticker] = useState(false); // 磁鐵貼
   const [needPetNameTag, setNeedPetNameTag] = useState(false); // 寵物名牌
+  const [needMusicBox, setNeedMusicBox] = useState(false); // 音樂盒
 
   // Load category from URL query if present
   useEffect(() => {
@@ -171,6 +173,10 @@ function CalculatorContent() {
       unitLow += petNameTagFee;
       unitHigh += petNameTagFee;
     }
+    if (needMusicBox) {
+      unitLow += musicBoxFee;
+      unitHigh += musicBoxFee;
+    }
 
     // （2026-07-15 移除「企業禮品組 NT$5,000 起」下限：企業展示樣品比照文創模型計價）
 
@@ -233,6 +239,7 @@ function CalculatorContent() {
     needFrameSetLarge,
     needMagnetSticker,
     needPetNameTag,
+    needMusicBox,
   ].join("|");
 
   const trackedSpecRef = useRef<string>("");
@@ -289,6 +296,7 @@ function CalculatorContent() {
       needFrameSetLarge && "相框展示套組(大)",
       needMagnetSticker && "磁鐵貼",
       needPetNameTag && "寵物名牌",
+      needMusicBox && "音樂盒",
     ].filter(Boolean).join("、");
     const summary = isBulkProject
       ? `Hi Q醬！我想詢問大量訂單：${productType}，尺寸 ${size}，數量 ${quantity}，想請你幫我專案報價，謝謝！`
@@ -510,8 +518,9 @@ function CalculatorContent() {
                 { label: "質感相框（小）", icon: "🖼️", desc: "8×10.5cm，桌上小巧收藏", on: needFrameSmall, toggle: () => setNeedFrameSmall(!needFrameSmall), fee: frameSmallFee },
                 { label: "相框展示套組（大）", icon: "🖼️", desc: "模型8×8cm＋相框12×12cm，含模型與相框展示效果", on: needFrameSetLarge, toggle: () => setNeedFrameSetLarge(!needFrameSetLarge), fee: frameSetLargeFee },
                 { label: "相框展示套組（小）", icon: "🖼️", desc: "模型4×4cm＋相框8×10.5cm，含模型與相框展示效果", on: needFrameSetSmall, toggle: () => setNeedFrameSetSmall(!needFrameSetSmall), fee: frameSetSmallFee },
-                { label: "磁鐵貼", icon: "🧲", desc: "可愛磁鐵貼，冰箱、置物櫃都好收藏", on: needMagnetSticker, toggle: () => setNeedMagnetSticker(!needMagnetSticker), fee: magnetStickerFee },
-                { label: "寵物名牌", icon: "🐾", desc: "刻上寵物名字，客製骨頭造型門牌", on: needPetNameTag, toggle: () => setNeedPetNameTag(!needPetNameTag), fee: petNameTagFee },
+                { label: "磁鐵貼・小文件夾子", icon: "🧲", desc: "3cm，原價 NT$499 加價購 NT$399，冰箱、文件都好收藏", on: needMagnetSticker, toggle: () => setNeedMagnetSticker(!needMagnetSticker), fee: magnetStickerFee },
+                { label: "寵物名牌", icon: "🐾", desc: "11cm，刻上寵物名字，客製骨頭造型門牌", on: needPetNameTag, toggle: () => setNeedPetNameTag(!needPetNameTag), fee: petNameTagFee },
+                { label: "音樂盒", icon: "🎵", desc: "6cm，公仔搭配旋轉音樂盒底座", on: needMusicBox, toggle: () => setNeedMusicBox(!needMusicBox), fee: musicBoxFee },
                 { label: "禮盒包裝", icon: "🎁", desc: "禮盒＋保護材，送禮體面", on: needGiftBox, toggle: () => setNeedGiftBox(!needGiftBox), fee: giftBoxFee },
               ].map((item) => (
                 <button
@@ -648,6 +657,7 @@ function CalculatorContent() {
                     needFrameSetLarge && "相框展示套組(大)",
                     needMagnetSticker && "磁鐵貼",
                     needPetNameTag && "寵物名牌",
+                    needMusicBox && "音樂盒",
                   ].filter(Boolean).join("、") || "無"}
                 </span>
               </div>
